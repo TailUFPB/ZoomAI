@@ -21,8 +21,10 @@ class Database:
         self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS images (id INTEGER PRIMARY KEY AUTOINCREMENT, project_id INTEGER, image BLOB,  image_order INTEGER ,FOREIGN KEY(project_id) REFERENCES projects(id))
         ''')
-
+    
         self.conn.commit()
+
+        print('database created')
 
     def insert_project(self, name, cover, created_at):
         self.cursor.execute('''
