@@ -2,8 +2,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap'); /*Titulos*/
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@500&display=swap'); /*Opçoes*/
 
-
-
 body{
-  font-family: 'IBM', sans-serif;
+  /**font-family: 'IBM', sans-serif;**/
 }
