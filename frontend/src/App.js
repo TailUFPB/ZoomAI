@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
+import Project from './pages/Zoom';
 
 function App() {
    return (
@@ -8,6 +9,7 @@ function App() {
          <BrowserRouter>
             <Routes>
                <Route path="/" element={<Home />} />
+               <Route path="/tti" element={<Project />} />
             </Routes>
          </BrowserRouter>
       </div>
