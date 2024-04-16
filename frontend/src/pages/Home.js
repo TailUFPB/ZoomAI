@@ -1,11 +1,13 @@
-import Header from '../components/Header';
+import Navbar from '../components/Navbar';
+import TextOnly from '../components/TextOnly';
+import Footer from '../components/Footer';
+
 function Home() {
     return (
         <>
-            <Header />
-            <div>
-                <h1>ZoomAI</h1>
-            </div>
+            <Navbar />
+            <TextOnly />
+            <Footer />
         </>
     )
 }
