@@ -1,21 +1,19 @@
 from diffusers import StableDiffusionInpaintPipeline, EulerAncestralDiscreteScheduler
+from database.db_utils import Database
 from PIL import Image
+from datetime import datetime
 import numpy as np
 import torch
 import time
 import os
-from database.db_utils import Database
-import base64 # need for encoding generated images
-from datetime import datetime
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = torch.cuda.get_device_name(0)
+
 inpaint_model_list = [
-    "stabilityai/stable-diffusion-2-inpainting",
-    "runwayml/stable-diffusion-inpainting",
-    "parlance/dreamlike-diffusion-1.0-inpainting",
-    "ghunkins/stable-diffusion-liberty-inpainting",
-    "ImNoOne/f222-inpainting-diffusers"
+    "stabilityai/stable-diffusion-2-inpainting"
 ]
+
+default_prompt = "A psychedelic jungle with trees that have glowing, fractal-like patterns, Simon stalenhag poster 1920s style, street level view, hyper futuristic, 8k resolution, hyper realistic"
 default_negative_prompt = "frames, borderline, text, charachter, duplicate, error, out of frame, watermark, low quality, ugly, deformed, blur"
 
 class Generator:
@@ -65,7 +63,7 @@ class Generator:
         mask_image = np.array(current_image)[:, :, 3]
         mask_image = Image.fromarray(255-mask_image).convert("RGB")
         current_image = current_image.convert("RGB")
-        #If necessary, we can load the image by its address
+        
         if (custom_init_image):
             current_image = custom_init_image.resize(
                 (width, height), resample=Image.LANCZOS)
@@ -91,7 +89,7 @@ class Generator:
 
             prev_image_fix = current_image
 
-            prev_image = shrink_and_paste_on_blank(current_image, mask_width)
+            prev_image = self.shrink_and_paste_on_blank(current_image, mask_width)
 
             current_image = prev_image
 
@@ -130,7 +128,7 @@ class Generator:
                 interpol_width2 = round(
                     (1 - (height-2*mask_width) / (height-2*interpol_width)) / 2*height
                 )
-                prev_image_fix_crop = shrink_and_paste_on_blank(
+                prev_image_fix_crop = self.shrink_and_paste_on_blank(
                     prev_image_fix, interpol_width2)
                 interpol_image.paste(prev_image_fix_crop, mask=prev_image_fix_crop)
 
