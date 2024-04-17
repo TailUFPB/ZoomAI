@@ -51,7 +51,7 @@ class Database:
 
     def get_images(self, project_id):
         self.cursor.execute('''
-            SELECT image FROM images WHERE project_id = ? ORDER BY image_order ASC
+            SELECT image FROM images WHERE project_id = ? ORDER BY image_order DESC
         ''', (project_id,))
 
         images = self.cursor.fetchall()
