@@ -1,4 +1,4 @@
-#!/home/franky/ZoomAI/backend/bin/python3
+#!/mnt/c/Users/allej/Documents/TAIL/ZoomAI/backend/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
