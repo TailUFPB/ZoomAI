@@ -18,7 +18,7 @@ class Generator:
         self.num_outpainting_steps = 25
         self.guidance_scale = 7
         self.num_inference_steps = 50
-        self.custom_init_image = None
+        self.self.custom_init_image = None
 
 
     def gpt_prompt_create(self, prompt):
@@ -26,14 +26,11 @@ class Generator:
 
     def sd_generate_image(
         self, 
-        model_id,
-        prompts_array,
-        negative_prompt,
-        num_outpainting_steps,
-        guidance_scale,
-        num_inference_steps,
-        custom_init_image
+        prompts_array
     ):
+        
+        if not prompts_array: 
+            prompts_array = self.default_prompt
 
         prompts = {}
         for x in prompts_array:
@@ -44,7 +41,7 @@ class Generator:
             except ValueError:
                 pass
         pipe = StableDiffusionInpaintPipeline.from_pretrained(
-            model_id,
+            self.inpaint_model_list[0],
             torch_dtype=torch.float16,
         )
         pipe.scheduler = EulerAncestralDiscreteScheduler.from_config(
@@ -63,18 +60,18 @@ class Generator:
         mask_image = Image.fromarray(255-mask_image).convert("RGB")
         current_image = current_image.convert("RGB")
         
-        if (custom_init_image):
-            current_image = custom_init_image.resize(
+        if (self.custom_init_image):
+            current_image = self.custom_init_image.resize(
                 (width, height), resample=Image.LANCZOS)
         else:
             init_images = pipe(prompt=prompts[min(k for k in prompts.keys() if k >= 0)],
-                            negative_prompt=negative_prompt,
+                            negative_prompt=self.negative_prompt,
                             image=current_image,
-                            guidance_scale=guidance_scale,
+                            guidance_scale=self.guidance_scale,
                             height=height,
                             width=width,
                             mask_image=mask_image,
-                            num_inference_steps=num_inference_steps)[0]
+                            num_inference_steps=self.num_inference_steps)[0]
             current_image = init_images[0]
         mask_width = 128
         num_interpol_frames = 30
@@ -82,9 +79,9 @@ class Generator:
         all_frames = []
         all_frames.append(current_image)
 
-        for i in range(num_outpainting_steps):
+        for i in range(self.num_outpainting_steps):
             print('Outpaint step: ' + str(i+1) +
-                ' / ' + str(num_outpainting_steps))
+                ' / ' + str(self.num_outpainting_steps))
 
             prev_image_fix = current_image
 
@@ -99,14 +96,14 @@ class Generator:
             # inpainting step
             current_image = current_image.convert("RGB")
             images = pipe(prompt=prompts[max(k for k in prompts.keys() if k <= i)],
-                        negative_prompt=negative_prompt,
+                        negative_prompt=self.negative_prompt,
                         image=current_image,
-                        guidance_scale=guidance_scale,
+                        guidance_scale=self.guidance_scale,
                         height=height,
                         width=width,
                         # generator = g_cuda.manual_seed(seed),
                         mask_image=mask_image,
-                        num_inference_steps=num_inference_steps)[0]
+                        num_inference_steps=self.num_inference_steps)[0]
             current_image = images[0]
             current_image.paste(prev_image, mask=prev_image)
 
@@ -144,14 +141,7 @@ class Generator:
         return 200
 
     def shrink_and_paste_on_blank(self, current_image, mask_width):
-        """
-        Decreases size of current_image by mask_width pixels from each side,
-        then adds a mask_width width transparent frame, 
-        so that the image the function returns is the same size as the input. 
-        :param current_image: input image to transform
-        :param mask_width: width in pixels to shrink from each side
-        """
-
+        
         height = current_image.height
         width = current_image.width
 
