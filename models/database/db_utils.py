@@ -40,6 +40,15 @@ class Database:
 
         self.conn.commit()
 
+    def get_all_projects(self):
+        self.cursor.execute('''
+            SELECT * FROM projects
+        ''')
+
+        projects = self.cursor.fetchall()
+
+        return projects
+
     def get_images(self, project_id):
         self.cursor.execute('''
             SELECT image FROM images WHERE project_id = ? ORDER BY image_order ASC
