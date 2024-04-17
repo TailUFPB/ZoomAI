@@ -13,3 +13,4 @@ scipy
 ftfy
 accelerate
 diffusers[torch]
+uvicorn

@@ -7,20 +7,19 @@ import torch
 import time
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = torch.cuda.get_device_name(0)
-
-inpaint_model_list = [
-    "stabilityai/stable-diffusion-2-inpainting"
-]
-
-default_prompt = "A psychedelic jungle with trees that have glowing, fractal-like patterns, Simon stalenhag poster 1920s style, street level view, hyper futuristic, 8k resolution, hyper realistic"
-default_negative_prompt = "frames, borderline, text, charachter, duplicate, error, out of frame, watermark, low quality, ugly, deformed, blur"
-
 class Generator:
     def __init__(self):
         self.actual_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.db = Database()
-        print(type(self.actual_date))
+        self.inpaint_model_list = ["stabilityai/stable-diffusion-2-inpainting"]
+        os.environ["CUDA_VISIBLE_DEVICES"] = torch.cuda.get_device_name(0)
+        self.default_negative_prompt = "frames, borderline, text, charachter, duplicate, error, out of frame, watermark, low quality, ugly, deformed, blur"
+        self.default_prompt = [[0, 'A psychedelic jungle with trees that have glowing, fractal-like patterns, Simon stalenhag poster 1920s style, street level view, hyper futuristic, 8k resolution, hyper realistic']]
+        self.num_outpainting_steps = 25
+        self.guidance_scale = 7
+        self.num_inference_steps = 50
+        self.custom_init_image = None
+
 
     def gpt_prompt_create(self, prompt):
         pass
@@ -135,7 +134,14 @@ class Generator:
                 all_frames.append(interpol_image)
             all_frames.append(current_image)
         
-        return all_frames
+            frames_dir = "all_frames"
+            if not os.path.exists(frames_dir):
+                os.makedirs(frames_dir)
+            
+            for i, frame in enumerate(all_frames):
+                frame.save(os.path.join(frames_dir, f"frame_{i}.png"))
+        
+        return 200
 
     def shrink_and_paste_on_blank(self, current_image, mask_width):
         """
