@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Query
 import sys
 import os
+import asyncio
 
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 sys.path.append(parent_dir)
@@ -32,10 +33,12 @@ app.add_middleware(
 async def create_infinite_zoom(prompt: str = Query(None)):
     
     # gpt_prompt = await g.gpt_prompt_create(prompt)
+    # img_response = await g.sd_generate_image(prompts_array=[(0, prompt)])
+    asyncio.create_task(g.sd_generate_image(prompts_array=[(0, prompt)]))
 
-    img_response = await g.sd_generate_image(prompts_array=[(0, prompt)])
-    
-    return {"status" : "ok", "data" : img_response}
+    print("started generating images")
+
+    return {"status" : "running"}
 
 
 

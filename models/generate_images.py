@@ -4,7 +4,6 @@ from PIL import Image
 from datetime import datetime
 import numpy as np
 import torch
-import time
 import os
 
 class Generator:
@@ -12,14 +11,14 @@ class Generator:
         self.actual_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.db = Database()
         self.inpaint_model_list = ["stabilityai/stable-diffusion-2-inpainting"]
-        os.environ["CUDA_VISIBLE_DEVICES"] = torch.cuda.get_device_name(0)
-        self.default_negative_prompt = "frames, borderline, text, charachter, duplicate, error, out of frame, watermark, low quality, ugly, deformed, blur"
+        os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+        
+        self.negative_prompt = "frames, borderline, text, charachter, duplicate, error, out of frame, watermark, low quality, ugly, deformed, blur"
         self.default_prompt = [[0, 'A psychedelic jungle with trees that have glowing, fractal-like patterns, Simon stalenhag poster 1920s style, street level view, hyper futuristic, 8k resolution, hyper realistic']]
         self.num_outpainting_steps = 25
         self.guidance_scale = 7
         self.num_inference_steps = 50
-        self.self.custom_init_image = None
-
+        self.custom_init_image = None
 
     def gpt_prompt_create(self, prompt):
         pass
@@ -44,6 +43,7 @@ class Generator:
             self.inpaint_model_list[0],
             torch_dtype=torch.float16,
         )
+
         pipe.scheduler = EulerAncestralDiscreteScheduler.from_config(
             pipe.scheduler.config)
         pipe = pipe.to("cuda")
