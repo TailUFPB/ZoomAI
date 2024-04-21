@@ -135,8 +135,10 @@ class Generator:
             if not os.path.exists(frames_dir):
                 os.makedirs(frames_dir)
             
-            for i, frame in enumerate(all_frames):
-                frame.save(os.path.join(frames_dir, f"frame_{i}.png"))
+            step = 10
+            for i in range(0, len(all_frames), step):
+                for j, frame in enumerate(all_frames[i:i+step]):
+                    frame.save(os.path.join(frames_dir, f"frame_{i + j}.png"))
         
         return 200
 
