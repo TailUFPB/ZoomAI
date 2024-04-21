@@ -1,0 +1,15 @@
+{
+  "prompts": {
+    "data": [
+      [
+        "0",
+        "underwater perspective, hyper realistic, 35mm 1.4f sharp focus, colossal (blue whale:1.3), (Cretaceous period:1.3), ancient marine (life:1.2), (ammonites:1.1), coral reefs, submerged (volcanoes:1.1), vibrant sea (plants:1.2), mysterious ocean depth"
+      ],
+    ],
+    "headers": [
+      "outpaint step",
+      "prompt"
+    ]
+  },
+  "negPrompt": "frames, borderline, text, character, duplicate, error, out of frame, watermark, low quality, ugly, deformed, blur"
+}
