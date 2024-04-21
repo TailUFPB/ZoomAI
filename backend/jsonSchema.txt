@@ -1,0 +1,51 @@
+{
+  "prompts": {
+    "data": [
+      [
+        "0",
+        "underwater perspective, hyper realistic, 35mm 1.4f sharp focus, colossal (blue whale:1.3), (Cretaceous period:1.3), ancient marine (life:1.2), (ammonites:1.1), coral reefs, submerged (volcanoes:1.1), vibrant sea (plants:1.2), mysterious ocean depth"
+      ],
+      [
+        "5",
+        "aerial view, hyper realistic, 35mm 1.4f sharp focus, migrating (humpback whales:1.3), (Ice Age:1.3), vast open (ocean:1.2), icebergs, (polar bears:1.1) on floating ice, chilly blue waters, aurora borealis in the sky, pristine wilderness"
+      ],
+      [
+        "10",
+        "beachfront view, hyper realistic, 35mm 1.4f sharp focus, (sperm whale:1.3), Ancient Polynesian (sailors:1.2), (1000 AD:1.3), handcrafted (canoes:1.1), tropical (island:1.2), lush palm trees, vibrant sunset, starry sky"
+      ],
+      [
+        "15",
+        "harbor view, hyper realistic, 35mm 1.4f sharp focus, pod of (orca whales:1.3), Viking (settlement:1.3), (800 AD:1.3), wooden (longships:1.2), rugged coastline, misty fjords, lively (market:1.1), bustling activity, overcast sky"
+      ],
+      [
+        "20",
+        "coastal view, hyper realistic, 35mm 1.4f sharp focus, (grey whale:1.3), Medieval European (port:1.3), (1400 AD:1.3), stone (fortress:1.2), sailing ships, busy (dockside:1.1), trade goods, distant mountains, vibrant day"
+      ],
+      [
+        "25",
+        "undersea view, hyper realistic, 35mm 1.4f sharp focus, (whale shark:1.3), coral (atoll:1.2), (1800 AD:1.3), exploring (submarine:1.1), colorful coral, tropical fish, sunken (shipwreck:1.2), mysterious sea life, filtered sunlight"
+      ],
+      [
+        "30",
+        "coastal village view, hyper realistic, 35mm 1.4f sharp focus, breaching (humpback whale:1.3), Native American (coastline:1.3), (1500 AD:1.3), (totem poles:1.2), canoes on shore, dense forest, majestic mountains, serene evening"
+      ],
+      [
+        "35",
+        "maritime scene, hyper realistic, 35mm 1.4f sharp focus, pod of (minke whales:1.3), Industrial Era (harbor:1.3), (1900 AD:1.3), steam-powered ships, bustling docks, distant city skyline, smoky atmosphere, sunset"
+      ],
+      [
+        "40",
+        "deep sea exploration, hyper realistic, 35mm 1.4f sharp focus, (giant squid:1.2) and (whale:1.3) encounter, modern times (submersible:1.1), (2000 AD:1.3), bioluminescent sea creatures, underwater mountain range, eerie deep sea"
+      ],
+      [
+        "45",
+        "futuristic ocean city, hyper realistic, 35mm 1.4f sharp focus, cybernetic (whale:1.3), (2200 AD:1.3), floating megastructures, underwater (habitats:1.2), neon lights, high-tech submarines, bustling aquatic life, night scene"
+      ]
+    ],
+    "headers": [
+      "outpaint step",
+      "prompt"
+    ]
+  },
+  "negPrompt": "frames, borderline, text, character, duplicate, error, out of frame, watermark, low quality, ugly, deformed, blur"
+}
