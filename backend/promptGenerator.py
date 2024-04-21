@@ -11,7 +11,6 @@ def getResponse(userInput):
         model="gpt-3.5-turbo-0125",
         messages=[
             {"role": "system", "content": "Creates a JSON based of the attached schema and change everything to the theme of user input."},
-            {"role": "system", "content" : "Even if the user input is on another language, translate to english"},
             {"role": "user", "content": userInput},
             {"role": "assistant", "content": jsonSchema},
             ]
