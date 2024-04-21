@@ -1,6 +1,19 @@
 import Chaos from "../public/assets/ccchaos.svg";
+import axios from 'axios';
+import {enviroment}  from '../common/enviroment'
 
 const TextOnly = () => {
+
+    const creteProjectRequest = async () => {
+      try {
+        const response = await axios.post(`${enviroment}/create_project`);
+        console.log(response);
+      } catch (error) {
+        console.error('Error creating project:', error);
+        // caso de erro, exibir uma mensagem de erro para o usuário
+      }
+    }
+
     return (
       <section className="relative overflow-hidden bg-black sm:pb-16 lg:pb-20 xl:pb-24 ">
         <div className="px-4 mx-auto relativea sm:px-6 lg:px-8 max-w-7xl ">
@@ -51,12 +64,12 @@ const TextOnly = () => {
                   </div>
                 </div>
                 <div className="sm:absolute flex sm:right-1.5 sm:inset-y-1.5 mt-4 sm:mt-0">
-                  <button
-                    type="submit"
+                  <div role="button"
+                    onClick={creteProjectRequest}
                     className="inline-flex items-center justify-center w-full px-5 py-5 text-sm font-semibold tracking-widest text-black uppercase transition-all duration-200 bg-white rounded-full sm:w-auto sm:py-3 hover:opacity-90"
                   >
                     Create Project
-                  </button>
+                  </div>
                 </div>
               </form>
             </div>
@@ -64,7 +77,7 @@ const TextOnly = () => {
             <div className="relative lg:col-start-2">
               <div className="">
                 {/**Gradiente aqui */}
-                <img  src={Chaos} alt="" />
+                <img  src={Chaos} alt="" className="rotate" />
               </div>
             </div>
 
