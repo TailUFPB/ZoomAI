@@ -15,7 +15,7 @@ class Database:
 
     def create_db(self):
         self.cursor.execute('''
-            CREATE TABLE IF NOT EXISTS projects (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, cover BLOB, created_at TEXT)
+            CREATE TABLE IF NOT EXISTS projects (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, cover BLOB, created_at TEXT, prompts TEXT)
         ''')
 
         self.cursor.execute('''
@@ -26,12 +26,16 @@ class Database:
 
         print('database created')
 
-    def insert_project(self, name, cover, created_at):
+    def insert_project(self, name, cover, created_at, prompts):
         self.cursor.execute('''
-            INSERT INTO projects (name, cover, created_at) VALUES (?, ?, ?)
-        ''', (name, cover, created_at))
+            INSERT INTO projects (name, cover, created_at, prompts) VALUES (?, ?, ?, ?)
+        ''', (name, cover, created_at, prompts))
 
         self.conn.commit()
+
+        return self.cursor.lastrowid
+
+        
 
     def insert_image(self, project_id, image, image_order):
         self.cursor.execute('''

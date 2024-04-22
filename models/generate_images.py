@@ -1,7 +1,9 @@
 from diffusers import StableDiffusionInpaintPipeline, EulerAncestralDiscreteScheduler
 from database.db_utils import Database
+from openai import OpenAI
 from PIL import Image
 from datetime import datetime
+import threading
 import numpy as np
 import torch
 import os
@@ -12,24 +14,91 @@ class Generator:
         self.db = Database()
         self.inpaint_model_list = ["stabilityai/stable-diffusion-2-inpainting"]
         os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+        self.openai_key = os.environ["OPENAI_API_KEY"] 
         
         self.negative_prompt = "frames, borderline, text, charachter, duplicate, error, out of frame, watermark, low quality, ugly, deformed, blur"
         self.default_prompt = [[0, 'A psychedelic jungle with trees that have glowing, fractal-like patterns, Simon stalenhag poster 1920s style, street level view, hyper futuristic, 8k resolution, hyper realistic']]
-        self.num_outpainting_steps = 25
+        self.num_outpainting_steps = 40
         self.guidance_scale = 7
         self.num_inference_steps = 50
         self.custom_init_image = None
+        self.project_id = None
 
-    def gpt_prompt_create(self, prompt):
-        pass
+        self.all_frames = []
+        self.mutex = threading.Lock()
+        self.sem = threading.Semaphore(0)
+        self.image_order = 0
+        self.end_thread = False
+
+    def save_image_in_db(self):
+        # consumer thread
+        # os.nice(10)
+        while True:
+            self.sem.acquire()
+            self.mutex.acquire()
+            frames_to_save = min(10, len(self.all_frames)) # save 10 frames at a time
+            if frames_to_save > 0:
+                frame = self.all_frames.pop(0)
+                self.mutex.release()
+
+                self.db.insert_image(self.project_id, frame, self.image_order)
+                self.image_order += 1
+            else:
+                self.mutex.release()
+                if self.end_thread: break
+
+    def findAvailableFilename(self, base_name):
+        # Check if the path with the name is already exist
+        index = 1
+        while True:
+            file_name = f"{base_name}{index}.json"
+            if not os.path.exists(file_name):
+                return file_name
+            index += 1
+
+    def sanity_check_string(self, input_string):
+        # Remove spaces and convert to lowercase
+        sanitized_string = input_string.replace(" ", "").lower()
+        return sanitized_string
+
+    def saveResponse(self, response, userInput):
+        # Save the response
+        userInputsanity = self.sanity_check_string(userInput)
+        #  but only the message
+        messageContent = response.choices[0].message.content
+        fileName = self.findAvailableFilename(userInputsanity)
+        with open(fileName, 'w') as file:
+            file.write(messageContent)
+
+    def gpt_prompt_create(self, userInput):
+        client = OpenAI(api_key= self.openai_key)
+
+        with open('jsonSchema.txt', 'r') as f:
+            jsonSchema = f.read()
+
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo-0125",
+            response_format={"type": "json_object"},
+            messages=[
+                {"role": "system", "content": "using the JSON attached, keeping the same struct and change everything to the theme of user input."},
+                {"role": "assistant", "content": "create 10 new elements on data. By starting with 0, increase the number by 5 each time"},
+                {"role": "user", "content": userInput},
+                {"role": "assistant", "content": jsonSchema},     
+            ] 
+                
+        )   
+        return response
 
     def sd_generate_image(
         self, 
-        prompts_array
+        prompts_array, project_id
     ):
         
         if not prompts_array: 
             prompts_array = self.default_prompt
+
+        self.project_id = project_id
+        self.end_thread = False
 
         prompts = {}
         for x in prompts_array:
@@ -52,7 +121,7 @@ class Generator:
         pipe.enable_attention_slicing()
         g_cuda = torch.Generator(device='cuda')
 
-        height = 512
+        height = 800
         width = height
 
         current_image = Image.new(mode="RGBA", size=(height, width))
@@ -76,8 +145,12 @@ class Generator:
         mask_width = 128
         num_interpol_frames = 30
 
-        all_frames = []
-        all_frames.append(current_image)
+        #start consumer thread
+        consumer_thread = threading.Thread(target=self.save_image_in_db)
+        consumer_thread.start()
+        
+        self.all_frames.append(current_image)
+        self.sem.release()
 
         for i in range(self.num_outpainting_steps):
             print('Outpaint step: ' + str(i+1) +
@@ -128,17 +201,13 @@ class Generator:
                     prev_image_fix, interpol_width2)
                 interpol_image.paste(prev_image_fix_crop, mask=prev_image_fix_crop)
 
-                all_frames.append(interpol_image)
-            all_frames.append(current_image)
-        
-            frames_dir = "all_frames"
-            if not os.path.exists(frames_dir):
-                os.makedirs(frames_dir)
-            
-            step = 10
-            for i in range(0, len(all_frames), step):
-                for j, frame in enumerate(all_frames[i:i+step]):
-                    frame.save(os.path.join(frames_dir, f"frame_{i + j}.png"))
+                self.all_frames.append(interpol_image)
+                self.sem.release()
+
+            self.all_frames.append(current_image)
+            self.sem.release()
+
+            self.end_thread = True
         
         return 200
 
