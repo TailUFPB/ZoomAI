@@ -7,6 +7,7 @@ import threading
 import numpy as np
 import torch
 import os
+import io
 
 class Generator:
     def __init__(self):
@@ -30,18 +31,53 @@ class Generator:
         self.image_order = 0
         self.end_thread = False
 
+        self.pipe = StableDiffusionInpaintPipeline.from_pretrained(
+            self.inpaint_model_list[0],
+            torch_dtype=torch.float16,
+        )
+
+        self.pipe.scheduler = EulerAncestralDiscreteScheduler.from_config(
+            self.pipe.scheduler.config)
+        self.pipe = self.pipe.to("cuda")
+
+        self.pipe.safety_checker = None
+        self.pipe.enable_attention_slicing()
+        
+        self.skip_frames = 10
+    
+    def read_image_from_db(self, project_id):
+        images = self.db.get_images(project_id)
+        count = 0
+
+        for image in images:
+            image = image[0]
+            image = Image.open(io.BytesIO(image))
+            
+            image_path = f"images/{project_id}"
+            if not os.path.exists(image_path):
+                os.makedirs(image_path)
+            image.save(f"{image_path}/{count}.png")
+            count += 1 
+
     def save_image_in_db(self):
-        # consumer thread
-        # os.nice(10)
+        thread_db = Database()
         while True:
             self.sem.acquire()
             self.mutex.acquire()
-            frames_to_save = min(10, len(self.all_frames)) # save 10 frames at a time
-            if frames_to_save > 0:
-                frame = self.all_frames.pop(0)
-                self.mutex.release()
+            if len(self.all_frames) > 0:
+                if self.image_order % self.skip_frames == 0:
+                    frame = self.all_frames.pop(0)
+                    imgByteArr = io.BytesIO()
+                    frame.save(imgByteArr, format="PNG")
+                    imgByteArr = imgByteArr.getvalue()
 
-                self.db.insert_image(self.project_id, frame, self.image_order)
+                    self.mutex.release()
+
+                    thread_db.insert_image(self.project_id, imgByteArr, self.image_order//self.skip_frames)
+                    print(f"frame {int((self.image_order)//self.skip_frames)} saved")
+                else:
+                    self.mutex.release()
+                    self.all_frames.pop(0)
                 self.image_order += 1
             else:
                 self.mutex.release()
@@ -108,17 +144,7 @@ class Generator:
                 prompts[key] = value
             except ValueError:
                 pass
-        pipe = StableDiffusionInpaintPipeline.from_pretrained(
-            self.inpaint_model_list[0],
-            torch_dtype=torch.float16,
-        )
 
-        pipe.scheduler = EulerAncestralDiscreteScheduler.from_config(
-            pipe.scheduler.config)
-        pipe = pipe.to("cuda")
-
-        pipe.safety_checker = None
-        pipe.enable_attention_slicing()
         g_cuda = torch.Generator(device='cuda')
 
         height = 800
@@ -133,7 +159,7 @@ class Generator:
             current_image = self.custom_init_image.resize(
                 (width, height), resample=Image.LANCZOS)
         else:
-            init_images = pipe(prompt=prompts[min(k for k in prompts.keys() if k >= 0)],
+            init_images = self.pipe(prompt=prompts[min(k for k in prompts.keys() if k >= 0)],
                             negative_prompt=self.negative_prompt,
                             image=current_image,
                             guidance_scale=self.guidance_scale,
@@ -168,7 +194,7 @@ class Generator:
 
             # inpainting step
             current_image = current_image.convert("RGB")
-            images = pipe(prompt=prompts[max(k for k in prompts.keys() if k <= i)],
+            images = self.pipe(prompt=prompts[max(k for k in prompts.keys() if k <= i)],
                         negative_prompt=self.negative_prompt,
                         image=current_image,
                         guidance_scale=self.guidance_scale,
@@ -212,7 +238,7 @@ class Generator:
         return 200
 
     def shrink_and_paste_on_blank(self, current_image, mask_width):
-        
+
         height = current_image.height
         width = current_image.width
 

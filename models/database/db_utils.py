@@ -40,7 +40,7 @@ class Database:
     def insert_image(self, project_id, image, image_order):
         self.cursor.execute('''
             INSERT INTO images (project_id, image, image_order) VALUES (?, ?, ?)
-        ''', (project_id, image, image_order))
+        ''', (project_id, sqlite3.Binary(image), image_order))
 
         self.conn.commit()
 

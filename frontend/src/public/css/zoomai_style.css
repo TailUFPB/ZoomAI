@@ -10,3 +10,9 @@
   .rotate {
     animation: rotate360 45s linear infinite; /* 2s de duração, linear e repetição infinita */
   }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  

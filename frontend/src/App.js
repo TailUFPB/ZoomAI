@@ -9,7 +9,7 @@ function App() {
          <BrowserRouter>
             <Routes>
                <Route path="/" element={<Home />} />
-               <Route path="/tti" element={<Project />} />
+               <Route path="/zoom" element={<Project />} />
             </Routes>
          </BrowserRouter>
       </div>
