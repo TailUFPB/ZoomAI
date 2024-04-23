@@ -17,7 +17,7 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 g = Generator()
 
-database = g.db
+database = g.get_database()
 
 # adding cors urls
 origins = [
