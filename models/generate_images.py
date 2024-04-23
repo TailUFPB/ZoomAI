@@ -73,7 +73,7 @@ class Generator:
 
                     self.mutex.release()
 
-                    thread_db.insert_image(self.project_id, imgByteArr, self.image_order//self.skip_frames)
+                    thread_db.insert_image(self.project_id, imgByteArr, int((self.image_order)//self.skip_frames))
                     print(f"frame {int((self.image_order)//self.skip_frames)} saved")
                 else:
                     self.mutex.release()
