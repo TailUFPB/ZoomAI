@@ -256,3 +256,6 @@ class Generator:
         prev_image = Image.fromarray(blank_image)
 
         return prev_image
+
+    def get_database(self):
+        return self.db

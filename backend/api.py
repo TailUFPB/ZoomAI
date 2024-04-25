@@ -20,7 +20,7 @@ g = Generator()
 
 task = None
 
-database = g.db
+database = g.get_database()
 
 # adding cors urls
 origins = [
