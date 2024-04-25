@@ -15,7 +15,8 @@ class Generator:
         self.db = Database()
         self.inpaint_model_list = ["stabilityai/stable-diffusion-2-inpainting"]
         os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-        self.openai_key = os.environ["OPENAI_API_KEY"] 
+        self.openai_key = ""
+        #os.environ["OPENAI_API_KEY"] 
         
         self.negative_prompt = "frames, borderline, text, charachter, duplicate, error, out of frame, watermark, low quality, ugly, deformed, blur"
         self.default_prompt = [[0, 'A psychedelic jungle with trees that have glowing, fractal-like patterns, Simon stalenhag poster 1920s style, street level view, hyper futuristic, 8k resolution, hyper realistic']]
