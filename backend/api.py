@@ -8,20 +8,24 @@ parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 sys.path.append(parent_dir)
 sys.path.append(os.path.join(parent_dir, 'models'))
 
-
+from status_return import *
 from models.generate_images import Generator
 
 #adding cors headers
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI
 
 app = FastAPI()
 g = Generator()
+
+task = None
 
 database = g.db
 
 # adding cors urls
 origins = [
     'http://localhost:3000'
+    
 ]
 
 # add middleware
@@ -35,16 +39,26 @@ app.add_middleware(
 
 @app.get('/create')
 async def create_infinite_zoom(prompt: str = Query(None)):
-    prompt_gpt = await g.gpt_prompt_create(prompt)
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    
-    project_id = database.insert_project(prompt, "see what to put here", now, prompt_gpt)
+    global task
+    try:
+        #prompt_gpt = await g.gpt_prompt_create(prompt)
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        #project_id = database.insert_project(prompt, "see what to put here", now, prompt_gpt)
+        task = asyncio.create_task(g.sd_generate_image(None,4))
 
-    status = g.sd_generate_image(prompt_gpt, project_id)
+        return {"status": 200}
+    except Exception as e:  
+        print(e)
+        return {"status": 500}
 
-    print("started generating images")
 
-    return {"status" : "running", "code" : status}
+@app.get('/check')
+async def check_status():
+    global task
+    if task:
+        return {"status": RUNNING if not task.done() else DONE}
+    else:
+        return {"status": NO_TASK}
 
 
 

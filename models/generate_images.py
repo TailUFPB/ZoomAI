@@ -125,7 +125,7 @@ class Generator:
         )   
         return response
 
-    def sd_generate_image(
+    async def sd_generate_image(
         self, 
         prompts_array, project_id
     ):
