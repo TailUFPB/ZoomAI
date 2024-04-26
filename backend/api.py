@@ -41,10 +41,10 @@ app.add_middleware(
 async def create_infinite_zoom(prompt: str = Query(None)):
     global task
     try:
-        #prompt_gpt = await g.gpt_prompt_create(prompt)
+        prompt_gpt = await g.gpt_prompt_create(prompt)
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        #project_id = database.insert_project(prompt, "see what to put here", now, prompt_gpt)
-        task = asyncio.create_task(g.sd_generate_image(None,10))
+        project_id = database.insert_project(prompt, None, now, prompt_gpt)
+        task = asyncio.create_task(g.sd_generate_image(prompt_gpt,project_id))
 
         return {"status": 200}
     except Exception as e:  

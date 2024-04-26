@@ -175,6 +175,11 @@ class Generator:
             print(f"Time to generate initial image: {finish_time - start_time} seconds")
 
         # salvar a capa do projeto com essa current_image aqui
+
+        buffer = io.BytesIO()
+        current_image.save(buffer, format="PNG")
+        cover = buffer.getvalue()
+        self.db.insert_project_cover(project_id, cover)
     
         mask_width = 128
         num_interpol_frames = 30

@@ -34,8 +34,13 @@ class Database:
         self.conn.commit()
 
         return self.cursor.lastrowid
+    
+    def insert_project_cover(self, project_id, cover):
+        self.cursor.execute('''
+            UPDATE projects SET cover = ? WHERE id = ?
+        ''', (sqlite3.Binary(cover), project_id))
 
-        
+        self.conn.commit()
 
     def insert_image(self, project_id, image, image_order):
         self.cursor.execute('''
