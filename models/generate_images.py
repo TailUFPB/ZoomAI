@@ -20,7 +20,7 @@ class Generator:
         #os.environ["OPENAI_API_KEY"] 
         
         self.negative_prompt = "frames, borderline, text, charachter, duplicate, error, out of frame, watermark, low quality, ugly, deformed, blur"
-        self.default_prompt = [[0, 'A futuristic city in the style of Studio Ghibli, with bustling streets and tall buildings adorned with hanging gardens and glowing signs. The city lights reflect on the calm waters of a river that runs through the metropolis, while futuristic trains glide silently along elevated tracks. On the horizon, skyscrapers rise under a starry sky, creating a magical and enchanting atmosphere.']]
+        self.default_prompt = [[0, 'An underwater scenario: a forest of black, twisted corals, with strange and menacing sea creatures moving among them. The corals have luminescent patterns resembling fractals, casting a ghostly light in the darkness. The street-level view shows a surreal and oppressive landscape, with ancient and mysterious underwater structures protruding from the ocean floor. The resolution is 8K, providing hyper-realistic details, while the style harkens back to the work of Simon Stålenhag but with a darker and more sinister atmosphere.']]
         self.num_outpainting_steps = 40
         self.guidance_scale = 7
         self.num_inference_steps = 50
@@ -127,7 +127,7 @@ class Generator:
         )   
         return response
 
-    async def sd_generate_image(
+    def sd_generate_image(
         self, 
         prompts_array, project_id
     ):
