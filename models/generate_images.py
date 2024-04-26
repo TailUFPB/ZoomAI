@@ -5,6 +5,7 @@ from PIL import Image
 from datetime import datetime
 import threading
 import numpy as np
+import time
 import torch
 import os
 import io
@@ -19,7 +20,7 @@ class Generator:
         #os.environ["OPENAI_API_KEY"] 
         
         self.negative_prompt = "frames, borderline, text, charachter, duplicate, error, out of frame, watermark, low quality, ugly, deformed, blur"
-        self.default_prompt = [[0, 'A psychedelic jungle with trees that have glowing, fractal-like patterns, Simon stalenhag poster 1920s style, street level view, hyper futuristic, 8k resolution, hyper realistic']]
+        self.default_prompt = [[0, 'A futuristic city in the style of Studio Ghibli, with bustling streets and tall buildings adorned with hanging gardens and glowing signs. The city lights reflect on the calm waters of a river that runs through the metropolis, while futuristic trains glide silently along elevated tracks. On the horizon, skyscrapers rise under a starry sky, creating a magical and enchanting atmosphere.']]
         self.num_outpainting_steps = 40
         self.guidance_scale = 7
         self.num_inference_steps = 50
@@ -160,6 +161,7 @@ class Generator:
             current_image = self.custom_init_image.resize(
                 (width, height), resample=Image.LANCZOS)
         else:
+            start_time = datetime.now()
             init_images = self.pipe(prompt=prompts[min(k for k in prompts.keys() if k >= 0)],
                             negative_prompt=self.negative_prompt,
                             image=current_image,
@@ -169,6 +171,11 @@ class Generator:
                             mask_image=mask_image,
                             num_inference_steps=self.num_inference_steps)[0]
             current_image = init_images[0]
+            finish_time = datetime.now()
+            print(f"Time to generate initial image: {finish_time - start_time} seconds")
+
+        # salvar a capa do projeto com essa current_image aqui
+    
         mask_width = 128
         num_interpol_frames = 30
 
@@ -178,7 +185,7 @@ class Generator:
         
         self.all_frames.append(current_image)
         self.sem.release()
-
+        start_time = datetime.now()
         for i in range(self.num_outpainting_steps):
             print('Outpaint step: ' + str(i+1) +
                 ' / ' + str(self.num_outpainting_steps))
@@ -206,6 +213,7 @@ class Generator:
                         num_inference_steps=self.num_inference_steps)[0]
             current_image = images[0]
             current_image.paste(prev_image, mask=prev_image)
+            
 
             # interpolation steps bewteen 2 inpainted images (=sequential zoom and crop)
             for j in range(num_interpol_frames - 1):
@@ -235,6 +243,9 @@ class Generator:
             self.sem.release()
 
             self.end_thread = True
+        
+        finish_time = datetime.now()
+        print(f"Time to generate images: {finish_time - start_time} seconds")
         
         return 200
 

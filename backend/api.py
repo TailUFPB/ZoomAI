@@ -59,6 +59,17 @@ async def check_status():
         return {"status": RUNNING if not task.done() else DONE}
     else:
         return {"status": NO_TASK}
+    
+
+@app.post('/stop')
+async def stop():
+    global task
+    if task:
+        task.cancel()
+        task = None
+        return {"status": 200}
+    else:
+        return {"status": NO_TASK}
 
 
 
