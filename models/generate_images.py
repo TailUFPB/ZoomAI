@@ -116,16 +116,16 @@ class Generator:
 
         response = client.chat.completions.create(
             model="gpt-3.5-turbo-0125",
-            response_format={"type": "json_object"},
             messages=[
-                {"role": "system", "content": "using the JSON attached, keeping the same struct and change everything to the theme of user input."},
+                {"role": "system", "content": "keep the same struct and change everything to the theme of user input."},
                 {"role": "assistant", "content": "create 10 new elements on data. By starting with 0, increase the number by 5 each time"},
+                {"role" :"assistant", "content": "add on each element"},
                 {"role": "user", "content": userInput},
                 {"role": "assistant", "content": jsonSchema},     
             ] 
-                
         )   
-        return response
+        mensagem = response.choices[0].message.content
+        return mensagem
 
     async def sd_generate_image(
         self, 
