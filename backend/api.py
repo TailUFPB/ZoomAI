@@ -44,7 +44,7 @@ async def create_infinite_zoom(prompt: str = Query(None)):
         #prompt_gpt = await g.gpt_prompt_create(prompt)
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         #project_id = database.insert_project(prompt, "see what to put here", now, prompt_gpt)
-        task = asyncio.create_task(g.sd_generate_image(None,4))
+        task = asyncio.create_task(g.sd_generate_image(None,10))
 
         return {"status": 200}
     except Exception as e:  
@@ -67,6 +67,15 @@ async def stop():
     if task:
         task.cancel()
         task = None
+        return {"status": 200}
+    else:
+        return {"status": NO_TASK}
+
+@app.get('/save')
+async def save_image():
+    global task
+    if task and task.done():
+        g.read_image_from_db(10)
         return {"status": 200}
     else:
         return {"status": NO_TASK}
