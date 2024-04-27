@@ -17,8 +17,6 @@ from fastapi import FastAPI
 app = FastAPI()
 g = Generator()
 
-task = False
-
 database = g.get_database()
 
 # adding cors urls
@@ -38,9 +36,10 @@ app.add_middleware(
 
 @app.get('/create/{prompt}')
 async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks):
-    global task
-    if task:
-        return {"status": RUNNING}
+    
+    if g.is_running():
+        return {"status": 400}
+    
     try:
         prompt_gpt = await g.gpt_prompt_create(prompt)
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -48,19 +47,19 @@ async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks):
         background_tasks.add_task(g.generate_images, prompt_gpt, project_id)
 
         return {"status": 200}
+    
     except Exception as e:  
         print(e)
         return {"status": 500}   
 
 #! using this rout to save the images in a path on aria2
-@app.get('/save')
-async def save_image():
-    global task
-    if task and task.done():
-        g.read_image_from_db(10)
+@app.get('/savepath/{project_id}')
+async def save_image(project_id: int):
+    if not g.is_running():
+        g.read_image_from_db(project_id)
         return {"status": 200}
     else:
-        return {"status": NO_TASK}
+        return {"status": RUNNING}
 
 
 

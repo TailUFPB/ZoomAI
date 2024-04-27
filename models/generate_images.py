@@ -14,6 +14,7 @@ class Generator:
     def __init__(self):
         self.actual_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.db = Database()
+        self.is_busy = False
         self.inpaint_model_list = ["stabilityai/stable-diffusion-2-inpainting"]
         os.environ["CUDA_VISIBLE_DEVICES"] = "0"
         self.openai_key = ""
@@ -132,12 +133,13 @@ class Generator:
         prompts_array, project_id
     ):
         
+        self.start_run()
+
         if not prompts_array: 
             prompts_array = self.default_prompt
 
         self.project_id = project_id
-        self.end_thread = False
-
+        
         prompts = {}
         for x in prompts_array:
             try:
@@ -247,11 +249,12 @@ class Generator:
             self.all_frames.append(current_image)
             self.sem.release()
 
-            self.end_thread = True
         
         finish_time = datetime.now()
         print(f"Time to generate images: {finish_time - start_time} seconds")
-        
+
+        self.finish_run()
+
         return 200
 
     def shrink_and_paste_on_blank(self, current_image, mask_width):
@@ -276,3 +279,17 @@ class Generator:
 
     def get_database(self):
         return self.db
+    
+    def is_running(self):
+        return self.is_busy
+    
+    def start_run(self):
+        self.is_busy = True
+        self.end_thread = False
+        self.all_frames = []
+        
+    def finish_run(self):
+        self.is_busy = False
+        self.end_thread = True
+
+    
