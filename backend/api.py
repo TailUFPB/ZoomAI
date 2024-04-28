@@ -38,7 +38,7 @@ app.add_middleware(
 async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks):
     
     if g.is_running():
-        return {"status": 400}
+        return RUNNING
     
     try:
         prompt_gpt = await g.gpt_prompt_create(prompt)
@@ -46,20 +46,20 @@ async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks):
         project_id = database.insert_project(prompt, None, now, prompt_gpt)
         background_tasks.add_task(g.generate_images, prompt_gpt, project_id)
 
-        return {"status": 200}
+        return STARTED
     
     except Exception as e:  
         print(e)
-        return {"status": 500}   
+        return ERROR
 
 #! using this rout to save the images in a path on aria2
 @app.get('/savepath/{project_id}')
 async def save_image(project_id: int):
     if not g.is_running():
         g.read_image_from_db(project_id)
-        return {"status": 200}
+        return 200
     else:
-        return {"status": RUNNING}
+        return 400
 
 
 

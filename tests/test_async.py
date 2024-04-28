@@ -3,9 +3,32 @@ import asyncio
 from fastapi.middleware.cors import CORSMiddleware
 from time import sleep
 
-app = FastAPI()
+class TestClass:
+    def __init__(self) -> None:
+        self.file_status_path = "status"
 
-task = False
+    def generate_images(self,prompt):
+        self.start_running()
+        
+        for i in range(50):
+            print(f"[{i}] running... {prompt}")
+            sleep(1)
+        print("done")
+
+        self.stop_running()
+        
+
+    def start_running(self):
+        with open(self.file_status_path, 'w') as f:
+            f.write("1")
+    def stop_running(self):
+        with open(self.file_status_path, 'w') as f:
+            f.write("0")
+    def get_status(self):
+        with open(self.file_status_path, 'r') as f:
+            return f.read() == "1"
+
+app = FastAPI()
 
 origins = [
     'http://localhost:3000'
@@ -21,24 +44,16 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-def generate_images():
-    global task
-    for i in range(20):
-        print(f"[{i}] running...")
-        sleep(1)
-    print("done")
-    task = False
-
-
+test = TestClass()
 
 @app.get('/create/{prompt}')
 async def test_async(prompt: str , background_tasks: BackgroundTasks ):
-    print("prompt: ", prompt)
-    global task
-    if task:
+    print("checking status: ",test.get_status())
+    if test.get_status():
         return 400
+    
     print("started generating images")
-    task = True
-    background_tasks.add_task(generate_images)
+
+    background_tasks.add_task(test.generate_images,prompt)
     return 200
 
