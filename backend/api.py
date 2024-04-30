@@ -6,6 +6,7 @@ parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 sys.path.append(parent_dir)
 sys.path.append(os.path.join(parent_dir, 'models'))
 
+from models.database.db_utils import Database
 from models.generate_images import Generator
 
 #adding cors headers
@@ -37,4 +38,14 @@ async def create_infinite_zoom(prompt, model_id, negative_prompt,
                 guidance_scale, num_inference_steps,custom_init_image)
     return {"status" : "ok", "data" : imgs}
 
+@app.get('/projects')
+async def visualize_all_projects():
+    ps = await Database()
+    projects = await ps.get_all_images()
+    return {"status" : "ok", "data": projects}
 
+@app.get('/project/{project_id}')
+async def visualize_project(project_id: int):
+    p = await Database()
+    project = await p.get_images(project_id)
+    return {"status" : "ok", "data" : project}
