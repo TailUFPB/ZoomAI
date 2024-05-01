@@ -51,16 +51,38 @@ class Database:
 
     def get_all_projects(self):
         self.cursor.execute('''
-            SELECT * FROM projects
+            SELECT p.*, i.image
+            FROM projects p
+            LEFT JOIN (
+                SELECT * from images ORDER BY project_id ASC, image_order DESC LIMIT 5
+            ) i ON p.id = i.project_id
+            ORDER BY p.id DESC
         ''')
 
-        projects = self.cursor.fetchall()
+        print(self.cursor.fetchall())
 
-        return projects
+        projects_with_images = {}
+        for row in self.cursor.fetchall():
+            project_id = row[0]
+            if project_id not in projects_with_images:
+                projects_with_images[project_id] = {
+                    'id': row[0],
+                    'name': row[1],
+                    'cover': row[2],
+                    'created_at': row[3],
+                    'prompts': row[4],
+                    'images': []
+                }
+            if row[5]:
+                projects_with_images[project_id]['images'].append(row[5])
+            
+        print(projects_with_images)
+
+        return projects_with_images
 
     def get_images(self, project_id):
         self.cursor.execute('''
-            SELECT image FROM images WHERE project_id = ? ORDER BY image_order DESC
+            SELECT image FROM images WHERE project_id = ? ORDER BY image_order ASC
         ''', (project_id,))
 
         images = self.cursor.fetchall()
