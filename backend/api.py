@@ -5,6 +5,8 @@ import os
 from datetime import datetime
 from io import BytesIO
 import zipfile
+import base64
+from typing import List
 
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 sys.path.append(parent_dir)
@@ -44,7 +46,7 @@ async def get_images(id: int):
 
     if not images:
         return HTTPException(status_code=404, detail="Project not found")
-    
+
     zip_buffer = BytesIO()
     with zipfile.ZipFile(zip_buffer, 'a', zipfile.ZIP_DEFLATED, False) as zip_file:
         for i, image in enumerate(images):
@@ -54,10 +56,6 @@ async def get_images(id: int):
     response.headers['Content-Disposition'] = f'attachment; filename=images.zip'
 
     return response 
-
-@app.get('/read_all')
-async def read_all():
-    
 
 @app.get('/create/{prompt}')
 async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks):

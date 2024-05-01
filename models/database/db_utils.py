@@ -54,12 +54,11 @@ class Database:
             SELECT p.*, i.image
             FROM projects p
             LEFT JOIN (
-                SELECT * from images ORDER BY project_id ASC, image_order DESC LIMIT 5
+                SELECT project_id, image FROM images 
+                ORDER BY image_order DESC
+                LIMIT 5
             ) i ON p.id = i.project_id
-            ORDER BY p.id DESC
         ''')
-
-        print(self.cursor.fetchall())
 
         projects_with_images = {}
         for row in self.cursor.fetchall():
