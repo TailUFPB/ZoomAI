@@ -45,7 +45,7 @@ const TextOnly = () => {
                       type="text"
                       name=""
                       id=""
-                      placeholder="Try City, Ocean, etc."
+                      placeholder="Try City, Ocean, etc ..."
                       className="block w-full py-4 pr-6 text-white placeholder-gray-500 bg-black border border-transparent rounded-full pl-14 sm:py-5 focus:border-transparent focus:ring-0"
                     />
                   </div>

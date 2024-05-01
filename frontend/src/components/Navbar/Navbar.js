@@ -1,12 +1,16 @@
+//import depedencs
 import { useState } from 'react';
-import ZoomAILogo from '../../assets/image/logo.svg'
+import classNames from 'classnames';
+
+//import assets
+import ZoomAILogo from '../../assets/image/logo.svg';
 
 const Navbar = () => {
     const [expanded, setExpanded] = useState(false);
 
     return (
-        <header className="py-4 bg-black sm:py-6">
-            <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <header className="py-4 bg-black sm:py-6 ">
+            <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 ">
                 <div className="flex items-center justify-between">
                     <div className="shrink-0 items-center">
                         <a href="#" title="" className="flex ">
@@ -31,7 +35,7 @@ const Navbar = () => {
                     </div>
 
                     <nav className="hidden ml-10 mr-auto space-x-10 lg:ml-20 lg:space-x-12 md:flex md:items-center md:justify-start">
-                        <a href="#" title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400"> Text  </a>
+                        <a href="/" title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400"> Text  </a>
 
                         <a href="#" title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400"> Text + Image </a>
 
@@ -41,13 +45,14 @@ const Navbar = () => {
 
                     <div className="relative hidden md:items-center md:justify-center md:inline-flex group">
                         <div className="absolute transition-all duration-200 rounded-full -inset-px bg-gradient-to-r from-cyan-500 to-purple-500 group-hover:shadow-lg group-hover:shadow-cyan-500/50 hover:bg-cyan-600"></div>
-                        <a href="#" title="" className="relative inline-flex items-center justify-center px-6 py-2 text-base font-normal text-white bg-black border border-transparent rounded-full hover:bg-blue-500" role="button"> My Projects  </a>
+                        <a href="myProjects" title="" className="relative inline-flex items-center justify-center px-6 py-2 text-base font-normal text-white bg-black border border-transparent rounded-full " role="button"> My Projects  </a>
                     </div>
                 </div>
 
+                //
                 <nav className={expanded ? '' : 'hidden'}>
                     <div className="flex flex-col pt-8 pb-4 space-y-6">
-                        <a href="#" title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400"> Text </a>
+                        <a href="/" title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400"> Text  </a>
 
                         <a href="#" title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400"> Text + Image </a>
 
@@ -55,7 +60,7 @@ const Navbar = () => {
 
                         <div className="relative inline-flex items-center justify-center group ">
                             <div className="absolute transition-all duration-200 rounded-full -inset-px bg-gradient-to-r from-cyan-500 to-purple-500 group-hover:shadow-lg group-hover:shadow-cyan-500/50 "></div>
-                            <a href="#" title="" className="relative inline-flex items-center justify-center w-full px-6 py-2 text-base font-normal text-white bg-black border border-transparent rounded-full hover:bg-blue-500" role="button"> My Projects </a>
+                            <a href="#" title="" className="relative inline-flex items-center justify-center w-full px-6 py-2 text-base font-normal text-white bg-black border border-transparent rounded-full " role="button"> My Projects </a>
                         </div>
                     </div>
                 </nav>
