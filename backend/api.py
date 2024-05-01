@@ -34,6 +34,11 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+#! see what database is returning
+@app.get('/get_images/{id}')
+async def get_images(id: int):
+    return database.get_images(id)
+
 @app.get('/create/{prompt}')
 async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks):
     
