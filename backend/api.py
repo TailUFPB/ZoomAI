@@ -27,9 +27,6 @@ from fastapi import FastAPI
 from pyngrok import ngrok
 import uvicorn
 
-from pyngrok import ngrok
-import uvicorn
-
 app = FastAPI()
 g = Generator()
 
