@@ -34,18 +34,6 @@ class Generator:
         self.sem = threading.Semaphore(0)
         self.image_order = 0
         self.end_thread = False
-
-        self.pipe = StableDiffusionInpaintPipeline.from_pretrained(
-            self.inpaint_model_list[0],
-            torch_dtype=torch.float16,
-        )
-
-        self.pipe.scheduler = EulerAncestralDiscreteScheduler.from_config(
-            self.pipe.scheduler.config)
-        self.pipe = self.pipe.to("cuda")
-
-        self.pipe.safety_checker = None
-        self.pipe.enable_attention_slicing()
         
         self.skip_frames = 10
     
@@ -150,6 +138,18 @@ class Generator:
             except ValueError:
                 pass
 
+        pipe = StableDiffusionInpaintPipeline.from_pretrained(
+            self.inpaint_model_list[0],
+            torch_dtype=torch.float16,
+        )
+
+        pipe.scheduler = EulerAncestralDiscreteScheduler.from_config(
+            pipe.scheduler.config)
+        pipe = pipe.to("cuda")
+
+        pipe.safety_checker = None
+        pipe.enable_attention_slicing()
+
         g_cuda = torch.Generator(device='cuda')
 
         height = 800
@@ -165,7 +165,7 @@ class Generator:
                 (width, height), resample=Image.LANCZOS)
         else:
             start_time = datetime.now()
-            init_images = self.pipe(prompt=prompts[min(k for k in prompts.keys() if k >= 0)],
+            init_images = pipe(prompt=prompts[min(k for k in prompts.keys() if k >= 0)],
                             negative_prompt=self.negative_prompt,
                             image=current_image,
                             guidance_scale=self.guidance_scale,
@@ -210,7 +210,7 @@ class Generator:
 
             # inpainting step
             current_image = current_image.convert("RGB")
-            images = self.pipe(prompt=prompts[max(k for k in prompts.keys() if k <= i)],
+            images = pipe(prompt=prompts[max(k for k in prompts.keys() if k <= i)],
                         negative_prompt=self.negative_prompt,
                         image=current_image,
                         guidance_scale=self.guidance_scale,

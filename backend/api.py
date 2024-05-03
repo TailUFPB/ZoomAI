@@ -116,5 +116,5 @@ if __name__ == '__main__':
     HOST_URL = public_url
 
     print(f"Public URL: {public_url}")
-    uvicorn.run("api:app", host="127.0.0.1", port=PORT, log_level="info", reload=True)
+    uvicorn.run("api:app", host="127.0.0.1", port=PORT, log_level="info", workers=1)
 
