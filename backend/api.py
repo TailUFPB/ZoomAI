@@ -115,3 +115,6 @@ if __name__ == '__main__':
     public_url = http_tunnel.public_url
     HOST_URL = public_url
 
+    print(f"Public URL: {public_url}")
+    uvicorn.run("api:app", host="127.0.0.1", port=PORT, log_level="info", reload=True)
+
