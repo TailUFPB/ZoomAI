@@ -1,9 +1,13 @@
+
 import sqlite3
 import os
 
+
 class Database:
-    database_file = os.path.join(os.path.dirname(__file__), 'zoomai_database.db')
-    def __init__(self, dpath = database_file):
+    database_file = os.path.join(
+        os.path.dirname(__file__), 'zoomai_database.db')
+
+    def __init__(self, dpath=database_file):
 
         if not os.path.exists(dpath):
             os.mknod(dpath)
@@ -21,7 +25,7 @@ class Database:
         self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS images (id INTEGER PRIMARY KEY AUTOINCREMENT, project_id INTEGER, image BLOB,  image_order INTEGER ,FOREIGN KEY(project_id) REFERENCES projects(id))
         ''')
-    
+
         self.conn.commit()
 
         print('database created')
@@ -34,7 +38,7 @@ class Database:
         self.conn.commit()
 
         return self.cursor.lastrowid
-    
+
     def insert_project_cover(self, project_id, cover):
         self.cursor.execute('''
             UPDATE projects SET cover = ? WHERE id = ?
@@ -51,12 +55,31 @@ class Database:
 
     def get_all_projects(self):
         self.cursor.execute('''
-            SELECT * FROM projects
+            SELECT p.*, i.image
+            FROM projects p
+            LEFT JOIN (
+                SELECT project_id, image FROM images 
+                ORDER BY image_order DESC
+                LIMIT 5
+            ) i ON p.id = i.project_id
         ''')
 
-        projects = self.cursor.fetchall()
+        projects_with_images = {}
+        for row in self.cursor.fetchall():
+            project_id = row[0]
+            if project_id not in projects_with_images:
+                projects_with_images[project_id] = {
+                    'id': row[0],
+                    'name': row[1],
+                    'cover': row[2],
+                    'created_at': row[3],
+                    'prompts': row[4],
+                    'images': []
+                }
+            if row[5]:
+                projects_with_images[project_id]['images'].append(row[5])
 
-        return projects
+        return projects_with_images
 
     def get_images(self, project_id):
         self.cursor.execute('''
@@ -66,7 +89,16 @@ class Database:
         images = self.cursor.fetchall()
 
         return images
-    
+
+    def get_images_ids(self):
+        self.cursor.execute('''
+            SELECT project_id FROM images
+        ''')
+
+        projects = self.cursor.fetchall()
+
+        return projects
+
     def tables_exist(self):
         self.cursor.execute('''
             SELECT name FROM sqlite_master WHERE type='table' AND name='projects'
