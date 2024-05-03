@@ -18,6 +18,8 @@ from models.generate_images import Generator
 #adding cors headers
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
+from pyngrok import ngrok
+import uvicorn
 
 app = FastAPI()
 g = Generator()
@@ -26,8 +28,9 @@ database = g.get_database()
 
 # adding cors urls
 origins = [
-    'http://localhost:3000'
-    
+    'http://localhost:3000',
+    'http://localhost:8000',
+    'http://localhost:5000',
 ]
 
 # add middleware
@@ -68,4 +71,11 @@ async def save_image(project_id: int):
 
 
 
+if __name__ == '__main__':
+    PORT = 8000
+    http_tunnel = ngrok.connect(PORT)
+    public_url = http_tunnel.public_url
+    HOST_URL = public_url
 
+    print(f"Public URL: {public_url}")
+    uvicorn.run("api:app", host="127.0.0.1", port=PORT, log_level="info", reload=True)

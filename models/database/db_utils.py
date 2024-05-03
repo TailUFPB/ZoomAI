@@ -15,7 +15,7 @@ class Database:
 
     def create_db(self):
         self.cursor.execute('''
-            CREATE TABLE IF NOT EXISTS projects (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, cover BLOB, created_at TEXT, prompts TEXT)
+            CREATE TABLE IF NOT EXISTS projects (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, created_at TEXT, prompts TEXT)
         ''')
 
         self.cursor.execute('''
@@ -26,21 +26,21 @@ class Database:
 
         print('database created')
 
-    def insert_project(self, name, cover, created_at, prompts):
+    def insert_project(self, name, created_at, prompts):
         self.cursor.execute('''
-            INSERT INTO projects (name, cover, created_at, prompts) VALUES (?, ?, ?, ?)
-        ''', (name, cover, created_at, prompts))
+            INSERT INTO projects (name, created_at, prompts) VALUES (?, ?, ?, ?)
+        ''', (name, created_at, prompts))
 
         self.conn.commit()
 
         return self.cursor.lastrowid
     
-    def insert_project_cover(self, project_id, cover):
-        self.cursor.execute('''
-            UPDATE projects SET cover = ? WHERE id = ?
-        ''', (sqlite3.Binary(cover), project_id))
+    # def insert_project_cover(self, project_id, cover):
+    #     self.cursor.execute('''
+    #         UPDATE projects SET cover = ? WHERE id = ?
+    #     ''', (sqlite3.Binary(cover), project_id))
 
-        self.conn.commit()
+    #     self.conn.commit()
 
     def insert_image(self, project_id, image, image_order):
         self.cursor.execute('''
@@ -67,7 +67,6 @@ class Database:
                 projects_with_images[project_id] = {
                     'id': row[0],
                     'name': row[1],
-                    'cover': row[2],
                     'created_at': row[3],
                     'prompts': row[4],
                     'images': []
