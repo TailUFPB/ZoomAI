@@ -64,9 +64,21 @@ class Database:
             ) i ON p.id = i.project_id
         ''')
 
-        projects = self.cursor.fetchall()
+        projects_with_images = {}
+        for row in self.cursor.fetchall():
+            project_id = row[0]
+            if project_id not in projects_with_images:
+                projects_with_images[project_id] = {
+                    'id': row[0],
+                    'name': row[1],
+                    'created_at': row[3],
+                    'prompts': row[4],
+                    'images': []
+                }
+            if row[5]:
+                projects_with_images[project_id]['images'].append(row[5])
 
-        return projects
+        return projects_with_images
 
     def get_images(self, project_id):
         self.cursor.execute('''
