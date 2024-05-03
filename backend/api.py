@@ -27,9 +27,6 @@ from fastapi import FastAPI
 from pyngrok import ngrok
 import uvicorn
 
-from pyngrok import ngrok
-import uvicorn
-
 app = FastAPI()
 g = Generator()
 
@@ -117,4 +114,7 @@ if __name__ == '__main__':
     http_tunnel = ngrok.connect(PORT)
     public_url = http_tunnel.public_url
     HOST_URL = public_url
+
+    print(f"Public URL: {public_url}")
+    uvicorn.run("api:app", host="127.0.0.1", port=PORT, log_level="info", reload=True)
 
