@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 import sys
 import os
+import base64
 
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 sys.path.append(parent_dir)
@@ -38,14 +39,30 @@ async def create_infinite_zoom(prompt, model_id, negative_prompt,
                 guidance_scale, num_inference_steps,custom_init_image)
     return {"status" : "ok", "data" : imgs}
 
+async def convert_imgs_to_base64(projects):
+    for project_id, project in projects.items():
+        images = project.get("images", [])
+        decoded_images = []
+        for image in images:
+            decoded_image = base64.b64decode(image)
+            decoded_images.append(decoded_image)
+        project["images"] = decoded_images
+    return projects
+
 @app.get('/projects')
 async def visualize_all_projects():
-    ps = await Database()
-    projects = await ps.get_all_images()
-    return {"status" : "ok", "data": projects}
+    db = await Database()
+    projects = await db.get_all_projects()
+    if not projects:
+        return
+    projects_with_imgs_decoded = convert_imgs_to_base64(projects)
+    return projects_with_imgs_decoded
 
 @app.get('/project/{project_id}')
 async def visualize_project(project_id: int):
-    p = await Database()
-    project = await p.get_images(project_id)
-    return {"status" : "ok", "data" : project}
+    db = await Database()
+    project = await db.get_images(project_id)
+    if not project:
+        return
+    project_with_img_decoded = convert_imgs_to_base64(project)
+    return project_with_img_decoded
