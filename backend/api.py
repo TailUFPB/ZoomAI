@@ -46,38 +46,6 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-#! see what database is returning
-@app.get('/get_images/{id}')
-async def get_images(id: int):
-    images = database.get_images(id)
-
-    if not images:
-        return HTTPException(status_code=404, detail="Project not found")
-
-    zip_buffer = BytesIO()
-    with zipfile.ZipFile(zip_buffer, 'a', zipfile.ZIP_DEFLATED, False) as zip_file:
-        for i, image in enumerate(images):
-            zip_file.writestr(f'{i}.png', image[0])
-    
-    response = StreamingResponse(iter([zip_buffer.getvalue()]), media_type='application/zip')
-    response.headers['Content-Disposition'] = f'attachment; filename=images.zip'
-
-    return response 
-
-@app.get('/get_projects')
-async def get_projects():
-    projects = database.get_all_projects()
-
-    for project_id, project in projects.items():
-        images = project['images']
-        if images:
-            base64_images = [base64.b64encode(image).decode('utf-8') for image in images]
-            project['images'] = base64_images
-
-    return projects
-
-
-
 @app.get('/create/{prompt}')
 async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks):
     
@@ -95,17 +63,6 @@ async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks):
     except Exception as e:  
         print(e)
         return ERROR
-
-#! using this rout to save the images in a path on aria2
-@app.get('/savepath/{project_id}')
-async def save_image(project_id: int):
-    if not g.is_running():
-        g.read_image_from_db(project_id)
-        return 200
-    else:
-        return 400
-
-
 
 if __name__ == '__main__':
     PORT = 8000
