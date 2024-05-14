@@ -46,6 +46,18 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+@app.get('/get_projects')
+async def get_projects():
+    projects = database.get_all_projects()
+
+    for project_id, project in projects.items():
+        images = project['images']
+        if images:
+            base64_images = [base64.b64encode(image).decode('utf-8') for image in images]
+            project['images'] = base64_images
+
+    return projects
+
 @app.get('/create/{prompt}')
 async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks):
     
