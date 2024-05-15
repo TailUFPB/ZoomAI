@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import {useNavigate} from 'react-router-dom';
 import JSZip, { file } from 'jszip';
 import axios from 'axios';
-import zipFilePath from '../public/assets/images.zip';
+import zipFilePath from '../public/assets/frames_800x800_tentoten.zip';
+import ReactLoading from 'react-loading';
 
 function Project() {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -62,12 +63,12 @@ function Project() {
                 const imageBlobs = await Promise.all(imagePromises);
                 const extractedImages = imageBlobs.map((blob) => URL.createObjectURL(blob));
                 setImages(extractedImages);
+                setIsLoading(false);
 
             } catch (error) {
                 console.error('Error loading images from ZIP:', error);
-            } finally {
-                setIsLoading(false);
             }
+
         };
 
         loadImagesFromZip();
@@ -77,11 +78,20 @@ function Project() {
     return (
         <>
             <div className="grid h-screen bg-black justify-center items-center">
-                <div className={`grid justify-center content-center justify-self-auto overflow-hidden rounded-lg object-cover ${isMedium ? 'size-[80rem]' : 'size-[35rem]'}`} id="image-container" onWheel={handleScroll} >
+                <div className={`overflow-hidden rounded-lg object-cover relative ${isMedium ? 'size-[80rem]' : 'size-[35rem]'}`} id="image-container" onWheel={handleScroll} >
                     {isLoading && 
-                        <p className="text-white">Carregando imagens...</p>
-                    }{!isLoading && (
-                        <img src={images[currentImageIndex]}/>)
+                        <div className="flex items-center justify-center " style={{marginTop: "50%", marginBottom: "50%"}}>
+                            <ReactLoading type='bars' />
+                        </div>
+                    }
+                    {images.length === 0 && !isLoading && 
+                    <div className="absolute flex items-center justify-center w-full h-full bg-black bg-opacity-50">
+                        <div className="text-white">No images found</div>
+                    </div>}
+                    {images.length > 0 && !isLoading &&
+                    <img
+                        src={images[currentImageIndex]}
+                    />
                     }
                 </div>
                 <div className="inline-flex items-center justify-center w-auto">
