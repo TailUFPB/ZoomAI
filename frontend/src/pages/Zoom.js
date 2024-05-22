@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useLocation} from 'react-router-dom';
 import JSZip, { file } from 'jszip';
 import axios from 'axios';
 import zipFilePath from '../public/assets/frames_800x800_tentoten.zip';
@@ -8,6 +8,7 @@ import ReactLoading from 'react-loading';
 function Project() {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const navigate = useNavigate();
+    const location = useLocation();
     const [images, setImages] = useState([]);
     const [isMedium, setIsMedium] = useState(window.matchMedia("(min-width: 1600px)").matches);
     const [isLoading, setIsLoading] = useState(true);
@@ -39,39 +40,45 @@ function Project() {
     }, []);
 
     useEffect(() => {
-        const loadImagesFromZip = async () => {
-            try {
-                const response = await axios.get(zipFilePath, { responseType: 'arraybuffer' });
-                const zip = new JSZip();
-                const zipContent = await zip.loadAsync(response.data);
+        if (!location.state || !location.state.project) {
+            navigate("/");
+        } else {
+            const project_id = location.state.project;
+            console.log("project_id", project_id)
+            const loadImagesFromZip = async () => {
+                try {
+                    const response = await axios.get(zipFilePath, { responseType: 'arraybuffer' });
+                    const zip = new JSZip();
+                    const zipContent = await zip.loadAsync(response.data);
 
-                const files = zip.folder().files;
+                    const files = zip.folder().files;
 
-                let files_size = Object.keys(files).length;
+                    let files_size = Object.keys(files).length;
+                    
+                    const imagePromises = [];
+                    
+                    for (let i = 0; i < files_size ; i++) {
+                        const imageName = `${i}.png`;
+                        const file = zip.file(imageName);
                 
-                const imagePromises = [];
-                
-                for (let i = 0; i < files_size ; i++) {
-                    const imageName = `${i}.png`;
-                    const file = zip.file(imageName);
-            
-                    if (file) {
-                        imagePromises.push(file.async('blob'));
-                    } 
+                        if (file) {
+                            imagePromises.push(file.async('blob'));
+                        } 
+                    }
+
+                    const imageBlobs = await Promise.all(imagePromises);
+                    const extractedImages = imageBlobs.map((blob) => URL.createObjectURL(blob));
+                    setImages(extractedImages);
+                    setIsLoading(false);
+
+                } catch (error) {
+                    console.error('Error loading images from ZIP:', error);
                 }
 
-                const imageBlobs = await Promise.all(imagePromises);
-                const extractedImages = imageBlobs.map((blob) => URL.createObjectURL(blob));
-                setImages(extractedImages);
-                setIsLoading(false);
+            };
 
-            } catch (error) {
-                console.error('Error loading images from ZIP:', error);
-            }
-
-        };
-
-        loadImagesFromZip();
+            loadImagesFromZip();
+        }
     }, []);
 
 

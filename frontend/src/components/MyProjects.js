@@ -9,9 +9,15 @@ import { RxArrowTopRight } from "react-icons/rx";
 import { GiClick } from "react-icons/gi";
 
 import { ServiceData } from "./Constants/constants";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const AllProjects = () => {
+  const navigate = useNavigate();
+
+  const gotoZoom = (project) => {
+    navigate(`/zoom`, {state: {project}});
+  }
+
   return (
     <div className='flex flex-col h-screen bg-black m:pb-16 lg:pb-20 xl:pb-24' style={{minHeight: "700px"}}>
       <div className='flex items-center justify-center flex-col gap-6 m-5 p-12' style={{marginTop: "40px"}}>
@@ -29,7 +35,7 @@ const AllProjects = () => {
         >
           {ServiceData.map((item) => (
           <SwiperSlide key={item.title} onClick={()=>
-            {console.log("Redirect to project: ", item.title)}
+            {gotoZoom(item.id)}
           }>
             
             <div className="relative group flex flex-col-reverse shadow-lg text-white rounded-xl slide-container">
