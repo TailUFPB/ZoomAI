@@ -15,5 +15,29 @@
     display: none;
   }
 
+  .redirect-to-project {
+    cursor: pointer;
+  }
+
+  .redirect-to-project:hover {
+    scale: 1.2;
+    transition-duration: 0.3s;
+    
+  }
+
+
+
+  .project-image {
+    object-fit: cover;
+    border-radius: 10px;
+    height: 300px;
+    width: auto;
+    cursor: pointer;
+  }
+
+  .project-image:hover {
+    opacity: 0.8;
+  }
+
   
   
