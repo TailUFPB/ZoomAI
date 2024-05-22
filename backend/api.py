@@ -46,24 +46,6 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-#! see what database is returning
-@app.get('/get_images/{id}')
-async def get_images(id: int):
-    images = database.get_images(id)
-
-    if not images:
-        return HTTPException(status_code=404, detail="Project not found")
-
-    zip_buffer = BytesIO()
-    with zipfile.ZipFile(zip_buffer, 'a', zipfile.ZIP_DEFLATED, False) as zip_file:
-        for i, image in enumerate(images):
-            zip_file.writestr(f'{i}.png', image[0])
-    
-    response = StreamingResponse(iter([zip_buffer.getvalue()]), media_type='application/zip')
-    response.headers['Content-Disposition'] = f'attachment; filename=images.zip'
-
-    return response 
-
 @app.get('/get_projects')
 async def get_projects():
     projects = database.get_all_projects()
@@ -76,13 +58,45 @@ async def get_projects():
 
     return projects
 
+def verifyWord(word):
+    vowels = "aeiou"
 
+    if (len(word) > 2):
+        consonants = "bcdfghjklmnpqrstvwxyz"
+        has_vowel = False
+        has_consonant = False
+
+        for letter in word.lower():
+            if letter in vowels:
+                has_vowel = True
+            elif letter in consonants:
+                has_consonant = True
+
+            if has_vowel & has_consonant:
+                return True
+    else:
+        for letter in word.lower():
+            if letter in vowels:
+                return True
+        
+    return False
 
 @app.get('/create/{prompt}')
 async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks):
     
     if g.is_running():
         return RUNNING
+    
+    for index, word in enumerate(prompt.split()):
+        if (len(word) <= 30):
+
+            if (verifyWord(word) or word.isnumeric()):
+                continue
+            else:
+                return "Invalid prompt"
+            
+        else:
+            return "Invalid prompt"
     
     try:
         prompt_gpt = await g.gpt_prompt_create(prompt)
@@ -95,17 +109,6 @@ async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks):
     except Exception as e:  
         print(e)
         return ERROR
-
-#! using this rout to save the images in a path on aria2
-@app.get('/savepath/{project_id}')
-async def save_image(project_id: int):
-    if not g.is_running():
-        g.read_image_from_db(project_id)
-        return 200
-    else:
-        return 400
-
-
 
 if __name__ == '__main__':
     PORT = 8000

@@ -107,7 +107,7 @@ class Generator:
         response = client.chat.completions.create(
             model="gpt-3.5-turbo-0125",
             messages=[
-                {"role": "system", "content": "keep the same struct and change everything to the theme of user input."},
+                {"role": "system", "content": "keep the same struct and change everything to the theme of user input. ( if the word dont make sense or is incorrect, change to another similar word )."},
                 {"role": "assistant", "content": "create 10 new elements on data. By starting with 0, increase the number by 5 each time"},
                 {"role" :"assistant", "content": "add on each element"},
                 {"role": "user", "content": userInput},
@@ -119,7 +119,7 @@ class Generator:
 
     def sd_generate_image(
         self, 
-        prompts_array, project_id
+        prompts_array, project_id, init_image=None,
     ):
         
         self.start_run()
