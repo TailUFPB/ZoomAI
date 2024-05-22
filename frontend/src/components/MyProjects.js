@@ -23,7 +23,6 @@ const AllProjects = () => {
         <Swiper
           spaceBetween={50}
           slidesPerView={3}
-          grabCursor={true}
           freeMode={true}
           modules={[FreeMode, Pagination]}
           className='max-w-[90%] lg:max-w-[80%]'  
@@ -48,7 +47,7 @@ const AllProjects = () => {
           ))}
         </Swiper>
       </div>
-      <div className="flex justify-center mt-6">
+      <div className="flex justify-center mt-6" style={{userSelect: 'none'}}>
         <div className="relative inline-flex items-center justify-center group">
           <div className="absolute transition-all duration-200 rounded-full -inset-px bg-gradient-to-r from-cyan-500 to-purple-500 group-hover:shadow-lg group-hover:shadow-cyan-500/50"></div>
           <Link to="/" className="relative inline-flex items-center justify-center px-6 py-2 text-base font-normal text-white bg-black border border-transparent rounded-full" role="button"> New Project

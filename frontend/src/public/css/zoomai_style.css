@@ -25,6 +25,9 @@
     
   }
 
+  .slide-container {
+    user-select: none;
+  }
 
 
   .project-image {
@@ -33,10 +36,11 @@
     height: 300px;
     width: auto;
     cursor: pointer;
+    opacity: 0.8;
   }
 
   .project-image:hover {
-    opacity: 0.8;
+    opacity: 1;
   }
 
   
