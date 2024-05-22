@@ -1,8 +1,6 @@
 import './App.css';
 import React, { Children } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import React from 'react';
-
 
 //layout pages
 import Navbar from './components/Navbar/Navbar';
