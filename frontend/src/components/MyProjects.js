@@ -10,6 +10,7 @@ import { GiClick } from "react-icons/gi";
 
 import { ServiceData } from "./Constants/constants";
 import { Link, useNavigate } from 'react-router-dom';
+import ReactLoading from 'react-loading';
 
 const AllProjects = () => {
   const navigate = useNavigate();
@@ -43,7 +44,8 @@ const AllProjects = () => {
               <img src={item.backgroundImage} alt={item.title} className="object-cover project-image" />
               <div className="absolute left-0 p-4 z-20 flex items-start justify-between w-full h-full " style={{bottom: "0px", left: "0px", fontSize: "18px"}}>
                 <h1 className="text-2xl font-bold">{item.title}</h1>
-                <GiClick  className="redirect-to-project" size={20} />
+                {/* <GiClick  className="redirect-to-project" size={20} /> */}
+                <ReactLoading type='spin' height={"30px"} width={"30px"}/>
               </div>
             </div>
             
