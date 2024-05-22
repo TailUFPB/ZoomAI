@@ -1,0 +1,2 @@
+vowels = "[aeiouáéíóúâêîôûàèìòùäëïöüãẽĩõũŷỳỹậệộợặựĂÂÊÔƠƯÁÉÍÓÚÀÈÌÒÙÄËÏÖÜÃẼĨÕŨỶỲỸ]"
+consonants = "[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]"
