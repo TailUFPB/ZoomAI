@@ -4,6 +4,7 @@ from fastapi import FastAPI, BackgroundTasks, HTTPException
 from fastapi.responses import StreamingResponse
 import sys
 import os
+import re
 from datetime import datetime
 from io import BytesIO
 import zipfile
@@ -19,6 +20,7 @@ sys.path.append(parent_dir)
 sys.path.append(os.path.join(parent_dir, 'models'))
 
 from status_return import *
+from letters import vowels, consonants
 from models.generate_images import Generator
 
 #adding cors headers
@@ -59,26 +61,12 @@ async def get_projects():
     return projects
 
 def verifyWord(word):
-    vowels = "aeiou"
-
-    if (len(word) > 2):
-        consonants = "bcdfghjklmnpqrstvwxyz"
-        has_vowel = False
-        has_consonant = False
-
-        for letter in word.lower():
-            if letter in vowels:
-                has_vowel = True
-            elif letter in consonants:
-                has_consonant = True
-
-            if has_vowel & has_consonant:
-                return True
-    else:
-        for letter in word.lower():
-            if letter in vowels:
-                return True
-        
+    if len(word) > 2:
+        if re.search(vowels, word, re.IGNORECASE) and re.search(consonants, word, re.IGNORECASE):
+            return True
+    elif len(word) == 2:
+        if re.search(vowels, word, re.IGNORECASE):
+            return True
     return False
 
 @app.get('/create/{prompt}')

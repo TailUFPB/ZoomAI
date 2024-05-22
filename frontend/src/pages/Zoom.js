@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {useNavigate, useLocation} from 'react-router-dom';
 import JSZip, { file } from 'jszip';
 import axios from 'axios';
-import zipFilePath from '../public/assets/frames_800x800_tentoten.zip';
+import zipFilePath from '../public/assets/images.zip';
 import ReactLoading from 'react-loading';
 
 function Project() {
