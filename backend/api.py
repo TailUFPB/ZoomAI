@@ -58,11 +58,45 @@ async def get_projects():
 
     return projects
 
+def verifyWord(word):
+    vowels = "aeiou"
+
+    if (len(word) > 2):
+        consonants = "bcdfghjklmnpqrstvwxyz"
+        has_vowel = False
+        has_consonant = False
+
+        for letter in word.lower():
+            if letter in vowels:
+                has_vowel = True
+            elif letter in consonants:
+                has_consonant = True
+
+            if has_vowel & has_consonant:
+                return True
+    else:
+        for letter in word.lower():
+            if letter in vowels:
+                return True
+        
+    return False
+
 @app.get('/create/{prompt}')
 async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks):
     
     if g.is_running():
         return RUNNING
+    
+    for index, word in enumerate(prompt.split()):
+        if (len(word) <= 30):
+
+            if (verifyWord(word) or word.isnumeric()):
+                continue
+            else:
+                return "Invalid prompt"
+            
+        else:
+            return "Invalid prompt"
     
     try:
         prompt_gpt = await g.gpt_prompt_create(prompt)
