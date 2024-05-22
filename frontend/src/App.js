@@ -1,25 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+//layout pages
+import Navbar from './components/Navbar';
+import TextOnly from './components/TextOnly';
+import AllProjects from './components/MyProjects';
+import Footer from './components/Footer';
+import Project from './pages/Zoom';
+   
+
+const Layout= ({children}) => (
+  <>
+    <Navbar />
+    {children}
+    <Footer />
+  </>
+);
+
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+   return (
+      <div>
+         <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Layout> <TextOnly /> </Layout>} />
+              <Route path='/projects' element={<AllProjects />} />
+              <Route path="/zoom" element={<Project />} />
+            </Routes>
+         </BrowserRouter>
+      </div>
+   );
 }
 
 export default App;

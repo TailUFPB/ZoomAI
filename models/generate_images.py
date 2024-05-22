@@ -1,41 +1,134 @@
 from diffusers import StableDiffusionInpaintPipeline, EulerAncestralDiscreteScheduler
 from database.db_utils import Database
+from openai import OpenAI
 from PIL import Image
 from datetime import datetime
+import threading
 import numpy as np
-import torch
 import time
+import torch
 import os
-
-os.environ["CUDA_VISIBLE_DEVICES"] = torch.cuda.get_device_name(0)
-
-inpaint_model_list = [
-    "stabilityai/stable-diffusion-2-inpainting"
-]
-
-default_prompt = "A psychedelic jungle with trees that have glowing, fractal-like patterns, Simon stalenhag poster 1920s style, street level view, hyper futuristic, 8k resolution, hyper realistic"
-default_negative_prompt = "frames, borderline, text, charachter, duplicate, error, out of frame, watermark, low quality, ugly, deformed, blur"
+import io
 
 class Generator:
     def __init__(self):
         self.actual_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.db = Database()
-        print(type(self.actual_date))
+        self.is_busy = False
+        self.inpaint_model_list = ["stabilityai/stable-diffusion-2-inpainting"]
+        os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+        self.openai_key = ""
+        self.status_path = "status"
+        #os.environ["OPENAI_API_KEY"] 
+        
+        self.negative_prompt = "frames, borderline, text, charachter, duplicate, error, out of frame, watermark, low quality, ugly, deformed, blur"
+        self.default_prompt = [[0, 'An underwater scenario: a forest of black, twisted corals, with strange and menacing sea creatures moving among them. The corals have luminescent patterns resembling fractals, casting a ghostly light in the darkness. The street-level view shows a surreal and oppressive landscape, with ancient and mysterious underwater structures protruding from the ocean floor. The resolution is 8K, providing hyper-realistic details, while the style harkens back to the work of Simon Stålenhag but with a darker and more sinister atmosphere.']]
+        self.num_outpainting_steps = 40
+        self.guidance_scale = 7
+        self.num_inference_steps = 50
+        self.custom_init_image = None
+        self.project_id = None
 
-    def gpt_prompt_create(self, prompt):
-        pass
+        self.all_frames = []
+        self.mutex = threading.Lock()
+        self.sem = threading.Semaphore(0)
+        self.image_order = 0
+        self.end_thread = False
+        
+        self.skip_frames = 10
+    
+    def read_image_from_db(self, project_id):
+        images = self.db.get_images(project_id)
+        count = 0
+
+        for image in images:
+            image = image[0]
+            image = Image.open(io.BytesIO(image))
+            
+            image_path = f"images/{project_id}"
+            if not os.path.exists(image_path):
+                os.makedirs(image_path)
+            image.save(f"{image_path}/{count}.png")
+            count += 1 
+
+    def save_image_in_db(self):
+        thread_db = Database()
+        while True:
+            self.sem.acquire()
+            self.mutex.acquire()
+            if len(self.all_frames) > 0:
+                if self.image_order % self.skip_frames == 0:
+                    frame = self.all_frames.pop(0)
+                    imgByteArr = io.BytesIO()
+                    frame.save(imgByteArr, format="PNG")
+                    imgByteArr = imgByteArr.getvalue()
+
+                    self.mutex.release()
+
+                    thread_db.insert_image(self.project_id, imgByteArr, int((self.image_order)//self.skip_frames))
+                    print(f"frame {int((self.image_order)//self.skip_frames)} saved")
+                else:
+                    self.mutex.release()
+                    self.all_frames.pop(0)
+                self.image_order += 1
+            else:
+                self.mutex.release()
+                if self.end_thread: break
+
+    def findAvailableFilename(self, base_name):
+        # Check if the path with the name is already exist
+        index = 1
+        while True:
+            file_name = f"{base_name}{index}.json"
+            if not os.path.exists(file_name):
+                return file_name
+            index += 1
+
+    def sanity_check_string(self, input_string):
+        # Remove spaces and convert to lowercase
+        sanitized_string = input_string.replace(" ", "").lower()
+        return sanitized_string
+
+    def saveResponse(self, response, userInput):
+        # Save the response
+        userInputsanity = self.sanity_check_string(userInput)
+        #  but only the message
+        messageContent = response.choices[0].message.content
+        fileName = self.findAvailableFilename(userInputsanity)
+        with open(fileName, 'w') as file:
+            file.write(messageContent)
+
+    def gpt_prompt_create(self, userInput):
+        client = OpenAI(api_key= self.openai_key)
+
+        with open('jsonSchema.txt', 'r') as f:
+            jsonSchema = f.read()
+
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo-0125",
+            messages=[
+                {"role": "system", "content": "keep the same struct and change everything to the theme of user input."},
+                {"role": "assistant", "content": "create 10 new elements on data. By starting with 0, increase the number by 5 each time"},
+                {"role" :"assistant", "content": "add on each element"},
+                {"role": "user", "content": userInput},
+                {"role": "assistant", "content": jsonSchema},     
+            ] 
+        )   
+        mensagem = response.choices[0].message.content
+        return mensagem
 
     def sd_generate_image(
         self, 
-        model_id,
-        prompts_array,
-        negative_prompt,
-        num_outpainting_steps,
-        guidance_scale,
-        num_inference_steps,
-        custom_init_image
+        prompts_array, project_id
     ):
+        
+        self.start_run()
 
+        if not prompts_array: 
+            prompts_array = self.default_prompt
+
+        self.project_id = project_id
+        
         prompts = {}
         for x in prompts_array:
             try:
@@ -44,19 +137,22 @@ class Generator:
                 prompts[key] = value
             except ValueError:
                 pass
+
         pipe = StableDiffusionInpaintPipeline.from_pretrained(
-            model_id,
+            self.inpaint_model_list[0],
             torch_dtype=torch.float16,
         )
+
         pipe.scheduler = EulerAncestralDiscreteScheduler.from_config(
             pipe.scheduler.config)
         pipe = pipe.to("cuda")
 
         pipe.safety_checker = None
         pipe.enable_attention_slicing()
+
         g_cuda = torch.Generator(device='cuda')
 
-        height = 512
+        height = 800
         width = height
 
         current_image = Image.new(mode="RGBA", size=(height, width))
@@ -64,28 +160,43 @@ class Generator:
         mask_image = Image.fromarray(255-mask_image).convert("RGB")
         current_image = current_image.convert("RGB")
         
-        if (custom_init_image):
-            current_image = custom_init_image.resize(
+        if (self.custom_init_image):
+            current_image = self.custom_init_image.resize(
                 (width, height), resample=Image.LANCZOS)
         else:
+            start_time = datetime.now()
             init_images = pipe(prompt=prompts[min(k for k in prompts.keys() if k >= 0)],
-                            negative_prompt=negative_prompt,
+                            negative_prompt=self.negative_prompt,
                             image=current_image,
-                            guidance_scale=guidance_scale,
+                            guidance_scale=self.guidance_scale,
                             height=height,
                             width=width,
                             mask_image=mask_image,
-                            num_inference_steps=num_inference_steps)[0]
+                            num_inference_steps=self.num_inference_steps)[0]
             current_image = init_images[0]
+            finish_time = datetime.now()
+            print(f"Time to generate initial image: {finish_time - start_time} seconds")
+
+        # salvar a capa do projeto com essa current_image aqui
+
+        buffer = io.BytesIO()
+        current_image.save(buffer, format="PNG")
+        cover = buffer.getvalue()
+        self.db.insert_project_cover(project_id, cover)
+    
         mask_width = 128
         num_interpol_frames = 30
 
-        all_frames = []
-        all_frames.append(current_image)
-
-        for i in range(num_outpainting_steps):
+        #start consumer thread
+        consumer_thread = threading.Thread(target=self.save_image_in_db)
+        consumer_thread.start()
+        
+        self.all_frames.append(current_image)
+        self.sem.release()
+        start_time = datetime.now()
+        for i in range(self.num_outpainting_steps):
             print('Outpaint step: ' + str(i+1) +
-                ' / ' + str(num_outpainting_steps))
+                ' / ' + str(self.num_outpainting_steps))
 
             prev_image_fix = current_image
 
@@ -100,16 +211,17 @@ class Generator:
             # inpainting step
             current_image = current_image.convert("RGB")
             images = pipe(prompt=prompts[max(k for k in prompts.keys() if k <= i)],
-                        negative_prompt=negative_prompt,
+                        negative_prompt=self.negative_prompt,
                         image=current_image,
-                        guidance_scale=guidance_scale,
+                        guidance_scale=self.guidance_scale,
                         height=height,
                         width=width,
                         # generator = g_cuda.manual_seed(seed),
                         mask_image=mask_image,
-                        num_inference_steps=num_inference_steps)[0]
+                        num_inference_steps=self.num_inference_steps)[0]
             current_image = images[0]
             current_image.paste(prev_image, mask=prev_image)
+            
 
             # interpolation steps bewteen 2 inpainted images (=sequential zoom and crop)
             for j in range(num_interpol_frames - 1):
@@ -132,19 +244,21 @@ class Generator:
                     prev_image_fix, interpol_width2)
                 interpol_image.paste(prev_image_fix_crop, mask=prev_image_fix_crop)
 
-                all_frames.append(interpol_image)
-            all_frames.append(current_image)
+                self.all_frames.append(interpol_image)
+                self.sem.release()
+
+            self.all_frames.append(current_image)
+            self.sem.release()
+
         
-        return all_frames
+        finish_time = datetime.now()
+        print(f"Time to generate images: {finish_time - start_time} seconds")
+
+        self.finish_run()
+
+        return 200
 
     def shrink_and_paste_on_blank(self, current_image, mask_width):
-        """
-        Decreases size of current_image by mask_width pixels from each side,
-        then adds a mask_width width transparent frame, 
-        so that the image the function returns is the same size as the input. 
-        :param current_image: input image to transform
-        :param mask_width: width in pixels to shrink from each side
-        """
 
         height = current_image.height
         width = current_image.width
@@ -163,3 +277,28 @@ class Generator:
         prev_image = Image.fromarray(blank_image)
 
         return prev_image
+
+    def get_database(self):
+        return self.db
+    
+    def is_running(self):
+        with open(self.status_path, 'r') as f:
+            return f.read() == "1"
+    
+    def start_run(self):
+        self.end_thread = False
+        self.all_frames = []
+        
+        with open(self.status_path, 'w') as f:
+            f.write("1")
+
+        
+    def finish_run(self):
+        self.end_thread = True
+
+        with open(self.status_path, 'w') as f:
+            f.write("0")
+
+
+
+    

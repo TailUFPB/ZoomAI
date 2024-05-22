@@ -1,23 +1,40 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, BackgroundTasks, HTTPException
+from fastapi.responses import StreamingResponse
+from fastapi import FastAPI, BackgroundTasks, HTTPException
+from fastapi.responses import StreamingResponse
 import sys
 import os
+from datetime import datetime
+from io import BytesIO
+import zipfile
 import base64
+from typing import List
+from io import BytesIO
+import zipfile
+import base64
+from typing import List
 
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 sys.path.append(parent_dir)
 sys.path.append(os.path.join(parent_dir, 'models'))
 
-from models.database.db_utils import Database
+from status_return import *
 from models.generate_images import Generator
 
 #adding cors headers
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI
+from pyngrok import ngrok
+import uvicorn
 
 app = FastAPI()
+g = Generator()
+
+database = g.get_database()
 
 # adding cors urls
 origins = [
-    'http://localhost:3000'
+    'http://localhost:3000',
 ]
 
 # add middleware
@@ -29,40 +46,76 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-@app.get('/create')
-async def create_infinite_zoom(prompt, model_id, negative_prompt, 
-        num_outpainting_steps, guidance_scale, num_inference_steps,
-        custom_init_image):
-    g = await Generator()
-    better_prompt = await g.gpt_prompt_create(prompt)
-    imgs = await g.sd_generate_image(model_id, better_prompt, negative_prompt, num_outpainting_steps,
-                guidance_scale, num_inference_steps,custom_init_image)
-    return {"status" : "ok", "data" : imgs}
+@app.get('/get_projects')
+async def get_projects():
+    projects = database.get_all_projects()
 
-async def convert_imgs_to_base64(projects):
     for project_id, project in projects.items():
-        images = project.get("images", [])
-        decoded_images = []
-        for image in images:
-            decoded_image = base64.b64decode(image)
-            decoded_images.append(decoded_image)
-        project["images"] = decoded_images
+        images = project['images']
+        if images:
+            base64_images = [base64.b64encode(image).decode('utf-8') for image in images]
+            project['images'] = base64_images
+
     return projects
 
-@app.get('/projects')
-async def visualize_all_projects():
-    db = await Database()
-    projects = await db.get_all_projects()
-    if not projects:
-        return
-    projects_with_imgs_decoded = convert_imgs_to_base64(projects)
-    return projects_with_imgs_decoded
+def verifyWord(word):
+    vowels = "aeiou"
 
-@app.get('/project/{project_id}')
-async def visualize_project(project_id: int):
-    db = await Database()
-    project = await db.get_images(project_id)
-    if not project:
-        return
-    project_with_img_decoded = convert_imgs_to_base64(project)
-    return project_with_img_decoded
+    if (len(word) > 2):
+        consonants = "bcdfghjklmnpqrstvwxyz"
+        has_vowel = False
+        has_consonant = False
+
+        for letter in word.lower():
+            if letter in vowels:
+                has_vowel = True
+            elif letter in consonants:
+                has_consonant = True
+
+            if has_vowel & has_consonant:
+                return True
+    else:
+        for letter in word.lower():
+            if letter in vowels:
+                return True
+        
+    return False
+
+@app.get('/create/{prompt}')
+async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks):
+    
+    if g.is_running():
+        return RUNNING
+    
+    for index, word in enumerate(prompt.split()):
+        if (len(word) <= 30):
+
+            if (verifyWord(word) or word.isnumeric()):
+                continue
+            else:
+                return "Invalid prompt"
+            
+        else:
+            return "Invalid prompt"
+    
+    try:
+        prompt_gpt = await g.gpt_prompt_create(prompt)
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        project_id = database.insert_project(prompt, None, now, prompt_gpt)
+        background_tasks.add_task(g.generate_images, prompt_gpt, project_id)
+
+        return STARTED
+    
+    except Exception as e:  
+        print(e)
+        return ERROR
+
+if __name__ == '__main__':
+    PORT = 8000
+    http_tunnel = ngrok.connect(PORT)
+    public_url = http_tunnel.public_url
+    HOST_URL = public_url
+
+    print(f"Public URL: {public_url}")
+    uvicorn.run("api:app", host="127.0.0.1", port=PORT, log_level="info", workers=1)
+
