@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {useNavigate} from 'react-router-dom';
 import JSZip, { file } from 'jszip';
 import axios from 'axios';
-import zipFilePath from '../public/assets/frames_800x800_tentoten.zip';
+import zipFilePath from '../public/assets/images.zip';
 
 function Project() {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
