@@ -46,5 +46,6 @@
   
   .upload-button {
     height:60px;
-   
+    position: relative;
+    justify-content: flex-start;
   }
