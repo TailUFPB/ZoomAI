@@ -1,9 +1,15 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 import ZoomAILogo from '../public/assets/logo.svg'
 
 const Navbar = () => {
     const [expanded, setExpanded] = useState(false);
+    const navigate = useNavigate();
 
+    const gotoProjects = () => {
+        navigate('/projects');
+    }
+    
     return (
         <header className="py-4 bg-black sm:py-6">
             <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -41,7 +47,7 @@ const Navbar = () => {
 
                     <div className="relative hidden md:items-center md:justify-center md:inline-flex group">
                         <div className="absolute transition-all duration-200 rounded-full -inset-px bg-gradient-to-r from-cyan-500 to-purple-500 group-hover:shadow-lg group-hover:shadow-cyan-500/50 hover:bg-cyan-600"></div>
-                        <a href="#" title="" className="relative inline-flex items-center justify-center px-6 py-2 text-base font-normal text-white bg-black border border-transparent rounded-full hover:bg-blue-500" role="button"> My Projects  </a>
+                        <div onClick={gotoProjects} title="" className="relative inline-flex items-center justify-center px-6 py-2 text-base font-normal text-white bg-black border border-transparent rounded-full hover:bg-blue-500" role="button"> My Projects  </div>
                     </div>
                 </div>
 
@@ -55,7 +61,7 @@ const Navbar = () => {
 
                         <div className="relative inline-flex items-center justify-center group ">
                             <div className="absolute transition-all duration-200 rounded-full -inset-px bg-gradient-to-r from-cyan-500 to-purple-500 group-hover:shadow-lg group-hover:shadow-cyan-500/50 "></div>
-                            <a href="#" title="" className="relative inline-flex items-center justify-center w-full px-6 py-2 text-base font-normal text-white bg-black border border-transparent rounded-full hover:bg-blue-500" role="button"> My Projects </a>
+                            <a onClick={navigate("/projects")} title="" className="relative inline-flex items-center justify-center w-full px-6 py-2 text-base font-normal text-white bg-black border border-transparent rounded-full hover:bg-blue-500" role="button"> My Projects </a>
                         </div>
                     </div>
                 </nav>

@@ -8,11 +8,49 @@ import { FreeMode, Pagination } from 'swiper/modules';
 
 import { RxArrowTopRight } from "react-icons/rx";
 
-import { ServiceData } from "./Constants/index.js";
+import SpaceCity1 from "./Constants/SpaceCity1.jpg";
+import SpaceCity2 from "./Constants/SpaceCity2.jpeg";
+import SpaceCity3 from "./Constants/SpaceCity3.jpeg";
+
 import { Link } from 'react-router-dom';
 
 
-const MyProjects = () => {
+
+const ServiceData = [
+
+  {
+  title: "Development",
+  content: "Lorem ipsum dolor sit /amet, consectetur adipiscing elit.",
+  backgroundImage: SpaceCity2,
+  id: 1,
+  },
+  {
+  title: "Design1",
+  content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+  backgroundImage: SpaceCity3,
+  id: 2,
+  },
+  {
+  title: "Branding1",
+  content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+  backgroundImage: SpaceCity1,
+  id: 3,
+  },
+  {
+  title: "Design2",
+  content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+  backgroundImage: SpaceCity3,
+  id: 4,
+  },
+  {
+  title: "Branding2",
+  content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+  backgroundImage: SpaceCity1,
+  id: 5,
+  },
+];
+
+const AllProjects = () => {
   return (
     <div className='flex flex-col h-screen bg-black m:pb-16 lg:pb-20 xl:pb-24'>
       <div className='flex items-center justify-center flex-col gap-6 m-5 mt-10 p-12'>
@@ -20,34 +58,23 @@ const MyProjects = () => {
         <p className='tmt-4 text-lg font-normal text-gray-400 sm:mt-8'>Clarity gives you the blocks & components you need to create a truly professional website, landing page or admin panel for your SaaS.</p>
       </div>
 
-      <div className='flex items-center justify-center gap-6 flex-grow'>
+      <div className='flex items-center justify-center gap-6 flex-grow' >
         <Swiper
-          breakpoints={{
-            340: {
-              slidesPerView: 2,
-              spaceBetween: 15
-            },
-            700: {
-              slidesPerView: 3,
-              spaceBetween: 15
-            }
-          }}
-
-          freeMode={false}
+          slidesPerView={3}
+          spaceBetween={30}
+          freeMode={true}
           pagination={{
             clickable: true
           }}
-
           modules={[FreeMode, Pagination]}
-          className='max-w-[90%] lg:max-w-[80%]'
         >
-          {ServiceData.map((item) => (
-          <SwiperSlide key={item.title}>
+          
+          <SwiperSlide>
             <div className="flex flex-col gap-6 mb-20 group relative shadow-lg text-white rounded-xl overflow-hidden cursor-pointer">
               <div className="relative h-[250px] lg:h-[350px]">
                 <img
-                  src={item.backgroundImage}
-                  alt={item.title}
+                  src={"https://img.freepik.com/free-photo/colorful-design-with-spiral-design_188544-9588.jpg?size=626&ext=jpg&ga=GA1.1.44546679.1716249600&semt=sph"}
+                  
                   className="absolute inset-0 w-full h-full max-h-64 lg:max-h-96 object-cover"
                   style={{ maxHeight: '400px' }} 
                 />
@@ -55,13 +82,13 @@ const MyProjects = () => {
                 <div className="relative flex flex-col gap-3 p-6 lg:p-8">
                 </div>
                 <div className="absolute bottom-5 w-full flex justify-between px-5">
-                  <h1 className="text-xl lg:text-2xl ">{item.title}</h1>
-                  <RxArrowTopRight className="w-[35px] h-[35px] text-white group-hover:rotate-45 duration-100" />
+                  <h1 className="text-xl lg:text-2xl ">SPACE CITY</h1>
                 </div>
               </div>
             </div>
           </SwiperSlide>
-          ))}
+          
+
         </Swiper>
       </div>
       <div className="flex justify-center mt-8">
@@ -75,4 +102,4 @@ const MyProjects = () => {
   );
 };
 
-export default MyProjects;
+export default AllProjects;

@@ -29,26 +29,30 @@ export const ServiceData = [
     title: "Development",
     content: "Lorem ipsum dolor sit /amet, consectetur adipiscing elit.",
     backgroundImage: SpaceCity2,
+    id: 1,
     },
     {
-        title: "Design",
-        content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-        backgroundImage: SpaceCity3,
-        },
-    {
-    title: "Branding",
-    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    backgroundImage: SpaceCity1,
-    },
-    {
-    title: "Design",
+    title: "Design1",
     content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
     backgroundImage: SpaceCity3,
+    id: 2,
     },
     {
-        title: "Branding",
-        content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-        backgroundImage: SpaceCity1,
-        },
+    title: "Branding1",
+    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    backgroundImage: SpaceCity1,
+    id: 3,
+    },
+    {
+    title: "Design2",
+    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    backgroundImage: SpaceCity3,
+    id: 4,
+    },
+    {
+    title: "Branding2",
+    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    backgroundImage: SpaceCity1,
+    id: 5,
+    },
 ];
-
