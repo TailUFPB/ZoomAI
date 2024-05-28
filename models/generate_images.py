@@ -18,7 +18,7 @@ class Generator:
         self.inpaint_model_list = ["stabilityai/stable-diffusion-2-inpainting"]
         os.environ["CUDA_VISIBLE_DEVICES"] = "0"
         self.openai_key = ""
-        self.status_path = "status"
+        self.status_path = os.path.join(os.path.dirname(__file__), 'status')
         #os.environ["OPENAI_API_KEY"] 
         
         self.negative_prompt = "frames, borderline, text, charachter, duplicate, error, out of frame, watermark, low quality, ugly, deformed, blur"
