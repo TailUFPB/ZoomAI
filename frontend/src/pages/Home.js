@@ -39,7 +39,6 @@ const TextOnly = () => {
     try {
       if (prompt === "") {
         messageType = STATUS_ENUM.INVALID;
-        notify(messageType);
         return;
       }
       const response = await axios.post(`${enviroment}/create/${prompt}`);
