@@ -282,6 +282,12 @@ class Generator:
         return self.db
     
     def is_running(self):
+        
+        if not os.path.exists(self.status_path):
+            with open(self.status_path, 'w') as f:
+                f.write("0")
+            return False
+        
         with open(self.status_path, 'r') as f:
             return f.read() == "1"
     
