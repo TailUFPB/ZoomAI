@@ -69,6 +69,24 @@ def verifyWord(word):
             return True
     return False
 
+
+@app.get('/create_fake/{prompt}')
+async def create_fake_route(prompt: str, background_tasks: BackgroundTasks):
+    if g.is_running():
+        return RUNNING
+    
+    for index, word in enumerate(prompt.split()):
+        if (len(word) <= 30):
+            if (verifyWord(word) or word.isnumeric()):
+                continue
+            else:
+                return INVALID
+        else:
+            return INVALID
+    
+    return STARTED
+        
+
 @app.get('/create/{prompt}')
 async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks):
     
@@ -81,10 +99,10 @@ async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks):
             if (verifyWord(word) or word.isnumeric()):
                 continue
             else:
-                return "Invalid prompt"
+                return INVALID
             
         else:
-            return "Invalid prompt"
+            return INVALID
     
     try:
         prompt_gpt = await g.gpt_prompt_create(prompt)

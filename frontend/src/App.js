@@ -7,7 +7,8 @@ import AllProjects from './components/MyProjects';
 import Footer from './components/Footer';
 import Project from './pages/Zoom';
 import Home from './pages/Home';
-   
+
+
 
 const Layout= ({children}) => (
   <>
