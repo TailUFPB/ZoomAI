@@ -98,7 +98,7 @@ class Generator:
         with open(fileName, 'w') as file:
             file.write(messageContent)
 
-    def gpt_prompt_create(self, userInput):
+    async def gpt_prompt_create(self, userInput):
         json_schema_path = os.path.join(os.path.dirname(__file__), 'jsonSchema.txt')
         print(json_schema_path)
         client = OpenAI(api_key= self.openai_key)

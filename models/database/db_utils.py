@@ -32,7 +32,7 @@ class Database:
 
     def insert_project(self, name, created_at, prompts):
         self.cursor.execute('''
-            INSERT INTO projects (name, created_at, prompts) VALUES (?, ?, ?, ?)
+            INSERT INTO projects (name, created_at, prompts) VALUES (?, ?, ?)
         ''', (name, created_at, prompts))
 
         self.conn.commit()

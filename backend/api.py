@@ -103,10 +103,11 @@ async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks):
     try:
         print("Starting Task")
         prompt_gpt = await g.gpt_prompt_create(prompt)
+        print("Prompt GPT: ", prompt_gpt)
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        project_id = database.insert_project(prompt, None, now, prompt_gpt)
+        project_id = database.insert_project(prompt, now, prompt_gpt)
         print("Project ID: ", project_id)
-        background_tasks.add_task(g.generate_images, prompt_gpt, project_id)
+        #background_tasks.add_task(g.sd_generate_image, prompt_gpt, project_id)
 
         return STARTED
     
@@ -121,5 +122,5 @@ if __name__ == '__main__':
     HOST_URL = public_url
 
     print(f"Public URL: {public_url}")
-    uvicorn.run("api:app", host="127.0.0.1", port=PORT, log_level="info", workers=1)
+    uvicorn.run("api:app", host="127.0.0.1", port=PORT, log_level="info", workers=1, reload=True)
 
