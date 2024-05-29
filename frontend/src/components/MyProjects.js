@@ -56,9 +56,7 @@ const AllProjects = () => {
           className="max-w-[90%] lg:max-w-[80%]"
         >
           {ServiceData.map((item) => (
-          <SwiperSlide key={item.title} onClick={()=>
-            {gotoZoom(item.id)}
-          }>
+          <SwiperSlide key={item.title}>
             
             <div className=" flex flex-col gap-6 mb-20 group relative shadow-lg text-white rounded-xl px-6 py-8 h-[250px] w-[215px] lg:h-[400px] lg:w-[350px] overflow-hidden cursor-pointer">
               
@@ -66,7 +64,7 @@ const AllProjects = () => {
 
             <div className="absolute inset-0 bg-black opacity-10 group-hover:opacity-50"/>
             <div className=" relative flex flex-col gap-3 p-10">
-              <img src={item.backgroundImage} alt={item.title} className="object-cover project-image" />
+              <img src={item.backgroundImage} alt={item.title} className="object-cover project-image" onClick={()=>{gotoZoom(item.id)}}/>
               <div className="absolute left-0 p-4 z-20 flex items-start justify-between w-full h-full " style={{bottom: "0px", left: "0px", fontSize: "18px"}}>
                 <h1 className="text-2xl font-bold">{item.title}</h1>
                 {/* <GiClick  className="redirect-to-project" size={20} /> */}

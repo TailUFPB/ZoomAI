@@ -14,7 +14,8 @@ function Project() {
     const [isLoading, setIsLoading] = useState(true);
 
     const goBack = () => {
-        navigate("/");
+        // back to the previous page
+        navigate(-1);
     }
 
     const handleScroll = (event) => {
