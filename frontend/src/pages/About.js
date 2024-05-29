@@ -76,7 +76,7 @@ function About() {
                     </p>
                     <div className="flex items-center space-x-3">
                         <a
-                            href="/"
+                            href={autor.linkedin}
                             className="text-white transition-colors duration-300 hover:text-deep-purple-accent-400"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-linkedin" viewBox="0 0 16 16">
@@ -84,7 +84,7 @@ function About() {
                             </svg>
                         </a>
                         <a
-                            href="/"
+                            href={autor.github}
                             className="text-white transition-colors duration-300 hover:text-deep-purple-accent-400"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16">
