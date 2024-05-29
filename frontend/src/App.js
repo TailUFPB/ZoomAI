@@ -7,6 +7,7 @@ import AllProjects from './components/MyProjects';
 import Footer from './components/Footer';
 import Project from './pages/Zoom';
 import Home from './pages/Home';
+import { DiBlackberry } from 'react-icons/di';
    
 
 const Layout= ({children}) => (
@@ -20,7 +21,7 @@ const Layout= ({children}) => (
 
 function App() {
    return (
-      <div>
+      <div style={{ backgroundColor: 'black' }}>
          <BrowserRouter>
             <Routes>
               <Route path="/" element={<Layout> <Home /> </Layout>} />
