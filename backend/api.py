@@ -56,6 +56,23 @@ async def get_projects():
 
     return projects
 
+@app.get('/get_images/{id}')
+async def get_images(id: int):
+    images = database.get_images(id)
+
+    if not images:
+        return HTTPException(status_code=404, detail="Project not found")
+
+    zip_buffer = BytesIO()
+    with zipfile.ZipFile(zip_buffer, 'a', zipfile.ZIP_DEFLATED, False) as zip_file:
+        for i, image in enumerate(images):
+            zip_file.writestr(f'{i}.png', image[0])
+    
+    response = StreamingResponse(iter([zip_buffer.getvalue()]), media_type='application/zip')
+    response.headers['Content-Disposition'] = f'attachment; filename=images.zip'
+
+    return response 
+
 def verifyWord(word):
     if len(word) > 2:
         if re.search(vowels, word, re.IGNORECASE) and re.search(consonants, word, re.IGNORECASE):
