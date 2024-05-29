@@ -34,15 +34,10 @@ g = Generator()
 
 database = g.get_database()
 
-# adding cors urls
-origins = [
-    'http://localhost:3000',
-]
-
 # add middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins= origins, 
+    allow_origins= ["*"], 
     allow_credentials=True,
     allow_methods=["*"], 
     allow_headers=["*"]
@@ -70,7 +65,7 @@ def verifyWord(word):
     return False
 
 
-@app.get('/create_fake/{prompt}')
+@app.post('/create_fake/{prompt}')
 async def create_fake_route(prompt: str, background_tasks: BackgroundTasks):
     if g.is_running():
         return RUNNING
@@ -87,12 +82,13 @@ async def create_fake_route(prompt: str, background_tasks: BackgroundTasks):
     return STARTED
         
 
-@app.get('/create/{prompt}')
+@app.post('/create/{prompt}')
 async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks):
     
     if g.is_running():
         return RUNNING
     
+    print("Is running: ", g.is_running())
     for index, word in enumerate(prompt.split()):
         if (len(word) <= 30):
 
@@ -105,15 +101,17 @@ async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks):
             return INVALID
     
     try:
+        print("Starting Task")
         prompt_gpt = await g.gpt_prompt_create(prompt)
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         project_id = database.insert_project(prompt, None, now, prompt_gpt)
+        print("Project ID: ", project_id)
         background_tasks.add_task(g.generate_images, prompt_gpt, project_id)
 
         return STARTED
     
     except Exception as e:  
-        print(e)
+        print("Error: ", e)
         return ERROR
 
 if __name__ == '__main__':

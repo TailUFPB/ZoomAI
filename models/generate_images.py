@@ -17,7 +17,7 @@ class Generator:
         self.is_busy = False
         self.inpaint_model_list = ["stabilityai/stable-diffusion-2-inpainting"]
         os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-        self.openai_key = ""
+        self.openai_key = os.environ["OPENAI_API_KEY"]
         self.status_path = os.path.join(os.path.dirname(__file__), 'status')
         #os.environ["OPENAI_API_KEY"] 
         
@@ -100,6 +100,7 @@ class Generator:
 
     def gpt_prompt_create(self, userInput):
         json_schema_path = os.path.join(os.path.dirname(__file__), 'jsonSchema.txt')
+        print(json_schema_path)
         client = OpenAI(api_key= self.openai_key)
 
         with open(json_schema_path, 'r') as f:
