@@ -23,6 +23,7 @@ from status_return import *
 from letters import vowels, consonants
 from models.generate_images import Generator
 
+
 #adding cors headers
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
@@ -103,11 +104,12 @@ async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks):
     try:
         print("Starting Task")
         prompt_gpt = await g.gpt_prompt_create(prompt)
-        print("Prompt GPT: ", prompt_gpt)
+        prompt_text = prompt_gpt[0][1]
+        print("Prompt GPT Type: ",type(prompt_gpt))
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        project_id = database.insert_project(prompt, now, prompt_gpt)
+        project_id = database.insert_project(prompt, now, prompt_text)
         print("Project ID: ", project_id)
-        #background_tasks.add_task(g.sd_generate_image, prompt_gpt, project_id)
+        background_tasks.add_task(g.sd_generate_image, prompt_gpt, project_id)
 
         return STARTED
     
