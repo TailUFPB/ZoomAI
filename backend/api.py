@@ -1,7 +1,6 @@
 from fastapi import FastAPI, BackgroundTasks, HTTPException
-from fastapi.responses import StreamingResponse
-from fastapi import FastAPI, BackgroundTasks, HTTPException
-from fastapi.responses import StreamingResponse
+from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 import sys
 import os
 import re
@@ -14,6 +13,7 @@ from io import BytesIO
 import zipfile
 import base64
 from typing import List
+from PIL import Image
 
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 sys.path.append(parent_dir)
@@ -35,14 +35,24 @@ g = Generator()
 
 database = g.get_database()
 
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+origins = [
+    "http://localhost",
+    "http://localhost:8000",
+    "http://localhost:3000",
+]
+
 # add middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins= ["*"], 
+    allow_origins= origins, 
     allow_credentials=True,
     allow_methods=["*"], 
     allow_headers=["*"]
 )
+
+
 
 @app.get('/get_projects')
 async def get_projects():
@@ -60,18 +70,18 @@ async def get_projects():
 async def get_images(id: int):
     images = database.get_images(id)
 
-    if not images:
-        return HTTPException(status_code=404, detail="Project not found")
-
-    zip_buffer = BytesIO()
-    with zipfile.ZipFile(zip_buffer, 'a', zipfile.ZIP_DEFLATED, False) as zip_file:
-        for i, image in enumerate(images):
-            zip_file.writestr(f'{i}.png', image[0])
-    
-    response = StreamingResponse(iter([zip_buffer.getvalue()]), media_type='application/zip')
-    response.headers['Content-Disposition'] = f'attachment; filename=images.zip'
-
-    return response 
+    if images:
+        try:
+            for index, image in enumerate(images):
+                img = Image.open(BytesIO(image))
+                img.save(f"static/{id}_{index}.png")
+            
+            images_url = [f"/static/{id}_{index}.png" for index in range(len(images))]
+            return images_url 
+        
+        except Exception as e:
+            print("Error: ", e)
+            return ERROR
 
 def verifyWord(word):
     if len(word) > 2:
@@ -135,7 +145,7 @@ async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks):
         return ERROR
 
 if __name__ == '__main__':
-    PORT = 8000
+    PORT = 8080
     http_tunnel = ngrok.connect(PORT)
     public_url = http_tunnel.public_url
     HOST_URL = public_url
