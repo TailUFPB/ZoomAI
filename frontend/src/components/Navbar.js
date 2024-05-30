@@ -15,9 +15,9 @@ const Navbar = () => {
             <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between">
                     <div className="shrink-0 items-center">
-                        <a href="#" title="" className="flex ">
-                            <img className="w-auto" src={ZoomAILogo} alt="" />
-                        </a>
+                        <div className="flex ">
+                            <img className="w-auto" src={ZoomAILogo} alt="" draggable="false"/>
+                        </div>
                     </div>
 
                     <div className="flex md:hidden">
@@ -37,11 +37,11 @@ const Navbar = () => {
                     </div>
 
                     <nav className="hidden ml-10 mr-auto space-x-10 lg:ml-20 lg:space-x-12 md:flex md:items-center md:justify-start">
-                        <a href="#" title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400"> Text  </a>
+                        <div href="#" title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400" style={{cursor: "pointer"}}> Text  </div>
 
-                        <a href="#" title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400"> Image </a>
+                        <div href="#" title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400" style={{cursor: "pointer"}}> Image </div>
 
-                        <a href="#" title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400 "> About </a>
+                        <div href="#" title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400 " style={{cursor: "pointer"}}> About </div>
 
                     </nav>
 
@@ -53,11 +53,11 @@ const Navbar = () => {
 
                 <nav className={expanded ? '' : 'hidden'}>
                     <div className="flex flex-col pt-8 pb-4 space-y-6">
-                        <a href="#" title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400"> Text </a>
+                        <div className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400" style={{cursor: "pointer"}}> Text </div>
 
-                        <a href="#" title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400"> Image </a>
+                        <div className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400" style={{cursor: "pointer"}}> Image </div>
 
-                        <a href="#" title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400"> About </a>
+                        <div className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400" style={{cursor: "pointer"}}> About </div>
 
                         <div className="relative inline-flex items-center justify-center group ">
                             <div className="absolute transition-all duration-200 rounded-full -inset-px bg-gradient-to-r from-cyan-500 to-purple-500 group-hover:shadow-lg group-hover:shadow-cyan-500/50 "></div>

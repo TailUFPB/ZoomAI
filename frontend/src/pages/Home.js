@@ -101,9 +101,9 @@ const TextOnly = () => {
             </div>
   
             <div className="relative lg:col-start-2">
-              <div className="">
+              <div className="" style={{userSelect: 'none'}}>
                 {/**Gradiente aqui */}
-                <img  src={Chaos} alt="" className="rotate" />
+                <img  src={Chaos} alt="" className="rotate" draggable="false"/>
               </div>
             </div>
 
