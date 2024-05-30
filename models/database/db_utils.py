@@ -59,7 +59,7 @@ class Database:
             FROM projects p
             LEFT JOIN (
                 SELECT project_id, image FROM images 
-                ORDER BY image_order DESC
+                ORDER BY image_order ASC
                 LIMIT 1
             ) i ON p.id = i.project_id
         ''')
@@ -86,6 +86,7 @@ class Database:
         ''', (project_id,))
 
         images = self.cursor.fetchall()
+        images = [image[0] for image in images]
 
         return images
 

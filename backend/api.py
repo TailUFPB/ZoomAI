@@ -1,5 +1,5 @@
 from fastapi import FastAPI, BackgroundTasks, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 import sys
 import os
@@ -31,11 +31,13 @@ from pyngrok import ngrok
 import uvicorn
 
 app = FastAPI()
+
+static_path = os.path.join(os.path.dirname(__file__), 'static')
+app.mount("/static", StaticFiles(directory=static_path), name="static")
+
 g = Generator()
 
 database = g.get_database()
-
-app.mount("/static", StaticFiles(directory="static"), name="static")
 
 origins = [
     "http://localhost",
@@ -73,11 +75,8 @@ async def get_images(id: int):
     if images:
         try:
             for index, image in enumerate(images):
-                img = Image.open(BytesIO(image))
-                img.save(f"static/{id}_{index}.png")
-            
-            images_url = [f"/static/{id}_{index}.png" for index in range(len(images))]
-            return images_url 
+                base64_images = [base64.b64encode(image).decode('utf-8') for image in images]
+            return {"images": base64_images}
         
         except Exception as e:
             print("Error: ", e)
