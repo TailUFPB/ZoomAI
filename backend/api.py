@@ -61,10 +61,10 @@ async def get_projects():
     projects = database.get_all_projects()
 
     for project_id, project in projects.items():
-        images = project['images']
-        if images:
-            base64_images = [base64.b64encode(image).decode('utf-8') for image in images]
-            project['images'] = base64_images
+        cover = project['cover']
+        if cover:
+            base64_cover = base64.b64encode(cover).decode('utf-8')
+            projects[project_id]['cover'] = base64_cover
 
     return projects
 
