@@ -1,15 +1,9 @@
 from fastapi import FastAPI, BackgroundTasks, HTTPException
 from fastapi.responses import StreamingResponse
-from fastapi import FastAPI, BackgroundTasks, HTTPException
-from fastapi.responses import StreamingResponse
 import sys
 import os
 import re
 from datetime import datetime
-from io import BytesIO
-import zipfile
-import base64
-from typing import List
 from io import BytesIO
 import zipfile
 import base64
@@ -64,13 +58,13 @@ def verifyWord(word):
     if len(word) > 2:
         if re.search(vowels, word, re.IGNORECASE) and re.search(consonants, word, re.IGNORECASE):
             return True
-    elif len(word) == 2:
+    elif len(word) > 0:
         if re.search(vowels, word, re.IGNORECASE):
             return True
     return False
 
 @app.get('/create/{prompt}')
-async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks):
+async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks, custom_init_image=None):
     
     if g.is_running():
         return RUNNING
@@ -90,7 +84,7 @@ async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks):
         prompt_gpt = await g.gpt_prompt_create(prompt)
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         project_id = database.insert_project(prompt, None, now, prompt_gpt)
-        background_tasks.add_task(g.generate_images, prompt_gpt, project_id)
+        background_tasks.add_task(g.sd_generate_image, prompt_gpt, project_id, custom_init_image)
 
         return STARTED
     
