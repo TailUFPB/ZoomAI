@@ -10,9 +10,9 @@ import { STATUS_ENUM, STATUS_MESSAGE } from "../common/status_enum.js";
 
 import { ToastContainer, toast } from 'react-toastify';
 
-const TextOnly = () => {
+const UserParam = () => {
 
-  const [tabIndex, setTabIndex] = React.useState(0);
+  const [view, setView] = React.useState("text"); 
   const [prompt, setPrompt] = React.useState("");
   const [modalMessage, setModalMessage] = React.useState("");
 
@@ -80,6 +80,7 @@ const TextOnly = () => {
         theme="dark"
       />
       
+      <Navbar setView={setView} />
       <section className="relative overflow-hidden bg-black sm:pb-16 lg:pb-20 xl:pb-24 ">
         
         <div className="px-4 mx-auto relativea sm:px-6 lg:px-8 max-w-7xl ">
@@ -93,9 +94,11 @@ const TextOnly = () => {
                 Explore the infinity of possibilities with infinite zoom technology 
                 and let yourself be carried away by a visual experience that challenges the limits of imagination.
               </p>
-              {/* Se tabIndex for 0 coloca o PromptInput, se for 1 coloca o UploadButton */}
-              <UploadButton/>
-              <PromptInput request={creteProjectRequest} prompt={prompt} setPrompt={setPrompt}/>
+              {view === "text" ? (
+                <PromptInput request={createProjectRequest} prompt={prompt} setPrompt={setPrompt} />
+              ) : (
+                <UploadButton />
+              )}
   
               
             </div>
@@ -114,5 +117,5 @@ const TextOnly = () => {
     );
   };
   
-  export default TextOnly;
+  export default UserParam;
   
