@@ -131,7 +131,7 @@ class Generator:
 
     def sd_generate_image(
         self, 
-        prompts_array, project_id, custom_init_image,
+        prompts_array, project_id, init_image=None,
     ):
         
         self.start_run()
@@ -172,10 +172,11 @@ class Generator:
         mask_image = Image.fromarray(255-mask_image).convert("RGB")
         current_image = current_image.convert("RGB")
         
-        if (custom_init_image):
-            current_image = custom_init_image.resize(
+        if (self.custom_init_image):
+            current_image = self.custom_init_image.resize(
                 (width, height), resample=Image.LANCZOS)
         else:
+            start_time = datetime.now()
             init_images = pipe(prompt=prompts[min(k for k in prompts.keys() if k >= 0)],
                             negative_prompt=self.negative_prompt,
                             image=current_image,
@@ -185,6 +186,8 @@ class Generator:
                             mask_image=mask_image,
                             num_inference_steps=self.num_inference_steps)[0]
             current_image = init_images[0]
+            finish_time = datetime.now()
+            print(f"Time to generate initial image: {finish_time - start_time} seconds")
 
         # salvar a capa do projeto com essa current_image aqui
 

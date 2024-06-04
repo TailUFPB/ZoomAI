@@ -9,6 +9,10 @@ from io import BytesIO
 import zipfile
 import base64
 from typing import List
+from io import BytesIO
+import zipfile
+import base64
+from typing import List
 from PIL import Image
 
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
@@ -82,7 +86,7 @@ def verifyWord(word):
     if len(word) > 2:
         if re.search(vowels, word, re.IGNORECASE) and re.search(consonants, word, re.IGNORECASE):
             return True
-    elif len(word) > 0:
+    elif len(word) == 2:
         if re.search(vowels, word, re.IGNORECASE):
             return True
     return False
@@ -106,7 +110,7 @@ async def create_fake_route(prompt: str, background_tasks: BackgroundTasks):
         
 
 @app.post('/create/{prompt}')
-async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks, custom_init_image=None):
+async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks):
     
     if g.is_running():
         return RUNNING
@@ -131,7 +135,7 @@ async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks, c
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         project_id = database.insert_project(prompt, now, prompt_text)
         
-        background_tasks.add_task(g.sd_generate_image, prompt_gpt, project_id, custom_init_image)
+        background_tasks.add_task(g.sd_generate_image, prompt_gpt, project_id)
 
         return STARTED
     
