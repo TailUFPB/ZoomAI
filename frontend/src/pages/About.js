@@ -1,3 +1,4 @@
+import foto_allejandro from "../public/assets/allejandro.jpeg";
 import foto_fernanda from "../public/assets/fernanda.jpg";
 import foto_kaiky from "../public/assets/kaiky.jpeg";
 import foto_dantas from "../public/assets/dantas.jpeg";
@@ -8,17 +9,15 @@ function About() {
     const autors = [
         {
             nome: "Allejandro",
-            foto: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=3&amp;h=750&amp;w=1260",
+            foto: foto_allejandro,
             cargo: "Back-End Developer",
-            descricao: "Vincent Van Gogh’s most popular painting, The Starry Night.",
-            linkedin: "#",
-            github: "#"
+            linkedin: "https://www.linkedin.com/in/allej-sousa/",
+            github: "https://github.com/AllejandroSousa/"
         },
         {
             nome: "Fernanda Azevedo",
             foto: foto_fernanda,
             cargo: "Front-End Developer",
-            descricao: "Vincent Van Gogh’s most popular painting, The Starry Night.",
             linkedin: "https://www.linkedin.com/in/fernanda-azevedo-egc/",
             github: "https://github.com/fernandadants"
         },
@@ -26,7 +25,6 @@ function About() {
             nome: "Frankley Kaiky",
             foto: foto_kaiky,
             cargo: "Product Manager",
-            descricao: "Vincent Van Gogh’s most popular painting, The Starry Night.",
             linkedin: "https://www.linkedin.com/in/franky03/",
             github: "https://github.com/Franky03"
         },
@@ -34,15 +32,13 @@ function About() {
             nome: "Maria Moura",
             foto: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=3&amp;h=750&amp;w=1260",
             cargo: "Front-End Developer",
-            descricao: "Vincent Van Gogh’s most popular painting, The Starry Night.",
-            linkedin: "#",
-            github: "#"
+            linkedin: "https://www.linkedin.com/in/mariam0ura/",
+            github: "https://github.com/MariaM0ura"
         },
         {
             nome: "João Dantas",
             foto: foto_dantas,
             cargo: "Back-End Developer",
-            descricao: "Vincent Van Gogh’s most popular painting, The Starry Night.",
             linkedin: "https://www.linkedin.com/in/joao-victor-dantas/",
             github: "https://github.com/theBlueNautilus"
         },
@@ -50,7 +46,6 @@ function About() {
             nome: "Pucavaz",
             foto: foto_puca,
             cargo: "Product Owner",
-            descricao: "Vincent Van Gogh’s most popular painting, The Starry Night.",
             linkedin: "https://www.linkedin.com/in/pucavaz/",
             github: "http://github.com/PucaVaz/"
         },
@@ -60,20 +55,17 @@ function About() {
 
     autors.forEach((autor) => {
         autorsList.push(
-            <div className="grid sm:grid-cols-3">
-                <div className="relative w-full h-48 max-h-full rounded shadow sm:h-auto">
+            <div className="h-40 grid sm:grid-cols-2">
+                <div className="relative w-full h-full rounded shadow sm:h-auto">
                     <img
                         className="absolute object-cover w-full h-full rounded"
                         src={autor.foto}
                         alt="Person"
                     /> 
                 </div>
-                <div className="flex flex-col justify-center mt-5 sm:mt-0 sm:p-5 sm:col-span-2">
+                <div className="flex flex-col justify-center mt-5 sm:mt-0 sm:p-5">
                     <p className="text-white text-lg font-normal">{autor.nome}</p>
                     <p className="mb-4 text-xs text-white">{autor.cargo}</p>
-                    <p className="mb-4 text-sm tracking-wide text-white">
-                        {autor.descricao}
-                    </p>
                     <div className="flex items-center space-x-3">
                         <a
                             href={autor.linkedin}
@@ -102,29 +94,26 @@ function About() {
                 <section className="">
                     <div className="gap-16 items-center py-8 px-4 mx-auto max-w-screen-xl lg:grid lg:grid-cols-2 lg:py-16 lg:px-6">
                         <div className="font-light text-white sm:text-lg dark:text-gray-400">
-                            <p className="mb-4 text-4xl tracking-tight font-normal text-white">We didn't reinvent the wheel</p>
-                            <p className="mb-4">We are strategists, designers and developers. Innovators and problem solvers. Small enough to be simple and quick, but big enough to deliver the scope you want at the pace you need. Small enough to be simple and quick, but big enough to deliver the scope you want at the pace you need.</p>
-                            <p>We are strategists, designers and developers. Innovators and problem solvers. Small enough to be simple and quick.</p>
+                            <p className="mb-4 text-4xl tracking-tight font-normal text-white">Where Art and Technology Converge</p>
+                            <p className="mb-4">This project is about rediscovering the inherent beauty of infinity, its deep connection to our past, present and future. It's a celebration of artificial intelligence's ability to transform the ordinary into something extraordinary, finding infinite inspiration in the things that surround us.</p>
+                            <p>Here you will discover a world of hidden wonders, a symphony of textures, colors and shapes that dance and intertwine. Each pixel, each brushstroke, reveals a story waiting to be told, a testament to the boundless creativity to be found in the simplest of forms.</p>
                         </div>
                         <div className="grid grid-cols-2 gap-4 mt-8">
-                            <img className="w-full rounded-lg" src="https://images.pexels.com/photos/752525/pexels-photo-752525.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="office content 1" />
-                            <img className="mt-4 w-full lg:mt-10 rounded-lg" src="https://images.pexels.com/photos/18069156/pexels-photo-18069156/free-photo-of-3d-abstrato-resumo-abstrair.png?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="office content 2" />
+                            <img className="w-full rounded-lg " src="https://images.unsplash.com/photo-1541448232224-93f4a582b89d?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="office content 1" />
+                            <img className="mt-4 h-full object-cover lg:mt-10 rounded-lg" src="https://images.unsplash.com/photo-1534723328310-e82dad3ee43f?q=80&w=1936&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="office content 2" />
                         </div>
                     </div>
                 </section>
-                <hr class="w-48 h-1 mx-auto my-4 bg-gray-100 border-0 rounded md:my-10"></hr>
+                
                 <div className="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-20     lg:px-8 lg:py-20">
                     <div className="mx-auto mb-10 lg:max-w-xl sm:text-center">
                         <p className="mb-4 text-4xl tracking-tight font-bold text-white">
                             Know Our Team
                         </p>
-                        <p className="text-base text-white md:text-lg">
-                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-                            accusantium doloremque laudantium.
-                        </p>
                     </div>
+                    <hr class="w-48 h-1 mx-auto my-4 bg-gray-100 border-0 rounded md:my-10"></hr>
 
-                    <div className="grid gap-10 mx-auto lg:grid-cols-3 lg:max-w-screen-lg">
+                    <div className="grid gap-10 w-max mx-auto lg:grid-cols-3 lg:max-w-screen-lg">
                         {autorsList}
                     </div>
                 </div>
