@@ -9,6 +9,7 @@ import time
 import torch
 import os
 import io
+import ast
 
 class Generator:
     def __init__(self):
@@ -17,8 +18,8 @@ class Generator:
         self.is_busy = False
         self.inpaint_model_list = ["stabilityai/stable-diffusion-2-inpainting"]
         os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-        self.openai_key = ""
-        self.status_path = "status"
+        self.openai_key = os.environ["OPENAI_API_KEY"]
+        self.status_path = os.path.join(os.path.dirname(__file__), 'status')
         #os.environ["OPENAI_API_KEY"] 
         
         self.negative_prompt = "frames, borderline, text, charachter, duplicate, error, out of frame, watermark, low quality, ugly, deformed, blur"
@@ -98,24 +99,35 @@ class Generator:
         with open(fileName, 'w') as file:
             file.write(messageContent)
 
-    def gpt_prompt_create(self, userInput):
+    async def gpt_prompt_create(self, userInput):
+        json_schema_path = os.path.join(os.path.dirname(__file__), 'jsonSchema.txt')
+        print(json_schema_path)
         client = OpenAI(api_key= self.openai_key)
 
-        with open('jsonSchema.txt', 'r') as f:
+        with open(json_schema_path, 'r') as f:
             jsonSchema = f.read()
+
+        prompt = f"""
+            I have the following JSON schema: {jsonSchema}
+            Please create a single new entry in the same structure but based on the theme: "{userInput}". Ensure the format is identical.
+        """
 
         response = client.chat.completions.create(
             model="gpt-3.5-turbo-0125",
             messages=[
-                {"role": "system", "content": "keep the same struct and change everything to the theme of user input. ( if the word dont make sense or is incorrect, change to another similar word )."},
-                {"role": "assistant", "content": "create 10 new elements on data. By starting with 0, increase the number by 5 each time"},
-                {"role" :"assistant", "content": "add on each element"},
-                {"role": "user", "content": userInput},
-                {"role": "assistant", "content": jsonSchema},     
-            ] 
-        )   
+                {"role": "system", "content": "You are an assistant that helps create data entries based on a given theme."},
+                {"role": "user", "content": prompt}
+            ]
+        )
+        
+        print(response, "response")
         mensagem = response.choices[0].message.content
-        return mensagem
+
+        try:
+            mensage_list = ast.literal_eval(mensagem)
+            return mensage_list
+        except ValueError:
+            return mensagem
 
     def sd_generate_image(
         self, 
@@ -176,11 +188,6 @@ class Generator:
 
         # salvar a capa do projeto com essa current_image aqui
 
-        buffer = io.BytesIO()
-        current_image.save(buffer, format="PNG")
-        cover = buffer.getvalue()
-        self.db.insert_project_cover(project_id, cover)
-    
         mask_width = 128
         num_interpol_frames = 30
 
@@ -279,6 +286,12 @@ class Generator:
         return self.db
     
     def is_running(self):
+        
+        if not os.path.exists(self.status_path):
+            with open(self.status_path, 'w') as f:
+                f.write("0")
+            return False
+        
         with open(self.status_path, 'r') as f:
             return f.read() == "1"
     
