@@ -47,7 +47,7 @@ const Navbar = () => {
 
                         <div title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400" style={{cursor: "pointer"}} onClick={()=> {setViewIndex(1)}}> Image </div>
 
-                        <div title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400 " onClick={gotoAbout}> About </div>
+                        <div title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400 " style={{cursor: "pointer"}} onClick={gotoAbout}> About </div>
 
                     </nav>
 
@@ -63,7 +63,7 @@ const Navbar = () => {
 
                         <div className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400" style={{cursor: "pointer"}} onClick={()=> {setViewIndex(1)}}> Image </div>
 
-                        <div title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400" onClick={gotoAbout}> About </div>
+                        <div title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400" style={{cursor: "pointer"}} onClick={gotoAbout}> About </div>
 
                         <div className="relative inline-flex items-center justify-center group ">
                             <div className="absolute transition-all duration-200 rounded-full -inset-px bg-gradient-to-r from-cyan-500 to-purple-500 group-hover:shadow-lg group-hover:shadow-cyan-500/50 "></div>
