@@ -47,9 +47,9 @@ const Navbar = () => {
                     </div>
 
                     <nav className="hidden ml-10 mr-auto space-x-10 lg:ml-20 lg:space-x-12 md:flex md:items-center md:justify-start">
-                        <div title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400" style={{cursor: "pointer"}} onClick={()=> {setViewIndex(0)}}> Text  </div>
+                        <div title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400" style={{cursor: "pointer"}} onClick={()=> {gotoHome(); setViewIndex(0)}}> Text  </div>
 
-                        <div title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400" style={{cursor: "pointer"}} onClick={()=> {setViewIndex(1)}}> Image </div>
+                        <div title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400" style={{cursor: "pointer"}} onClick={()=> {gotoHome(); setViewIndex(1)}}> Image </div>
 
                         <div title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400 " style={{cursor: "pointer"}} onClick={gotoAbout}> About </div>
 
@@ -63,9 +63,9 @@ const Navbar = () => {
 
                 <nav className={expanded ? '' : 'hidden'}>
                     <div className="flex flex-col pt-8 pb-4 space-y-6">
-                        <div className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400" style={{cursor: "pointer"}} onClick={()=> {setViewIndex(0)}}> Text </div>
+                        <div className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400" style={{cursor: "pointer"}} onClick={()=> {gotoHome(); setViewIndex(0)}}> Text </div>
 
-                        <div className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400" style={{cursor: "pointer"}} onClick={()=> {setViewIndex(1)}}> Image </div>
+                        <div className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400" style={{cursor: "pointer"}} onClick={()=> {gotoHome(); setViewIndex(1)}}> Image </div>
 
                         <div title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400" style={{cursor: "pointer"}} onClick={gotoAbout}> About </div>
 
