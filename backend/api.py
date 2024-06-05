@@ -51,7 +51,7 @@ app.add_middleware(
 
 @app.get("/")
 async def read_root():
-    return {"message": "hello world, api monitoria"}
+    return {"message": "hello world, api zoomai"}
 
 
 @app.get('/get_projects')
@@ -157,6 +157,6 @@ async def create_infinite_zoom(prompt: str,
 
 if __name__ == '__main__':
     HOST = "0.0.0.0"  # Use 0.0.0.0 to bind to all available interfaces
-    PORT = 8000  # Replace with your desired port number
+    PORT = 8000 # Replace with your desired port number
 
     uvicorn.run("api:app", host=HOST, port=PORT, log_level="info", workers=1, reload=True)
