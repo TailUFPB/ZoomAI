@@ -20,7 +20,7 @@ const Layout = ({ children }) => (
 
 function App() {
    return (
-      <div>
+      <div style={{ backgroundColor: 'black' }}>
          <BrowserRouter>
             <Routes>
                <Route path="/" element={<Layout> <Home /> </Layout>} />

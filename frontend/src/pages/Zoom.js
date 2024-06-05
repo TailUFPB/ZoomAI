@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {useNavigate, useLocation} from 'react-router-dom';
-import JSZip, { file } from 'jszip';
 import axios from 'axios';
-import zipFilePath from '../public/assets/frames_800x800_tentoten.zip';
 import ReactLoading from 'react-loading';
+import {enviroment} from '../common/enviroment';
 
 function Project() {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -12,9 +11,13 @@ function Project() {
     const [images, setImages] = useState([]);
     const [isMedium, setIsMedium] = useState(window.matchMedia("(min-width: 1600px)").matches);
     const [isLoading, setIsLoading] = useState(true);
+    const [donwloading, setDownloading] = useState(false);
+
+    const project_id = location.state.project;
 
     const goBack = () => {
-        navigate("/");
+        // back to the previous page
+        navigate(-1);
     }
 
     const handleScroll = (event) => {
@@ -43,49 +46,46 @@ function Project() {
         if (!location.state || !location.state.project) {
             navigate("/");
         } else {
-            const project_id = location.state.project;
+            
             console.log("project_id", project_id)
-            const loadImagesFromZip = async () => {
+            const loadImages = async () => {
+                if(donwloading) return;
                 try {
-                    const response = await axios.get(zipFilePath, { responseType: 'arraybuffer' });
-                    const zip = new JSZip();
-                    const zipContent = await zip.loadAsync(response.data);
+                    setDownloading(true);
+                    const response = await axios.get(`${enviroment}/get_images/${project_id}`, {
+                        headers: { "ngrok-skip-browser-warning": "true" }
+                        });
 
-                    const files = zip.folder().files;
+                    const images_base64 = response.data.images;
 
-                    let files_size = Object.keys(files).length;
-                    
-                    const imagePromises = [];
-                    
-                    for (let i = 0; i < files_size ; i++) {
-                        const imageName = `${i}.png`;
-                        const file = zip.file(imageName);
-                
-                        if (file) {
-                            imagePromises.push(file.async('blob'));
-                        } 
+                    const blobs = [];
+
+                    for(let i = 0; i < images_base64.length; i++) {
+                        const image = images_base64[i];
+                        const imageBlob = await fetch(`data:image/png;base64,${image}`).then(res => res.blob());
+                        blobs.push(imageBlob);
                     }
 
-                    const imageBlobs = await Promise.all(imagePromises);
-                    const extractedImages = imageBlobs.map((blob) => URL.createObjectURL(blob));
-                    setImages(extractedImages);
-                    setIsLoading(false);
+                    setImages(blobs.map(blob => URL.createObjectURL(blob)));
 
                 } catch (error) {
                     console.error('Error loading images from ZIP:', error);
+                } finally {
+                    setDownloading(false);           
+                    setIsLoading(false);
                 }
 
             };
 
-            loadImagesFromZip();
+            loadImages();
         }
-    }, []);
+    }, [project_id]);
 
 
     return (
         <>
             <div className="grid h-screen bg-black justify-center items-center">
-                <div className={`overflow-hidden rounded-lg object-cover relative ${isMedium ? 'size-[80rem]' : 'size-[35rem]'}`} id="image-container" onWheel={handleScroll} >
+                <div className={`overflow-hidden rounded-lg object-cover relative ${isMedium ? 'size-[50rem]' : 'size-[35rem]'}`} id="image-container" onWheel={handleScroll} >
                     {isLoading && 
                         <div className="flex items-center justify-center " style={{marginTop: "50%", marginBottom: "50%"}}>
                             <ReactLoading type='bars' />
