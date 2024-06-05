@@ -13,7 +13,7 @@ function Project() {
     const [isLoading, setIsLoading] = useState(true);
     const [donwloading, setDownloading] = useState(false);
 
-    const project_id = 10 //location.state.project;
+    const project_id = location.state.project;
 
     const goBack = () => {
         // back to the previous page
@@ -85,7 +85,7 @@ function Project() {
     return (
         <>
             <div className="grid h-screen bg-black justify-center items-center">
-                <div className={`overflow-hidden rounded-lg object-cover relative ${isMedium ? 'size-[80rem]' : 'size-[35rem]'}`} id="image-container" onWheel={handleScroll} >
+                <div className={`overflow-hidden rounded-lg object-cover relative ${isMedium ? 'size-[50rem]' : 'size-[35rem]'}`} id="image-container" onWheel={handleScroll} >
                     {isLoading && 
                         <div className="flex items-center justify-center " style={{marginTop: "50%", marginBottom: "50%"}}>
                             <ReactLoading type='bars' />

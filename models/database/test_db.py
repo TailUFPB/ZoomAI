@@ -6,4 +6,5 @@ import zipfile
 
 db = Database()
 
-result = db.get_all_projects()
+result = db.get_images_ids()
+print(result)
