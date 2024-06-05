@@ -9,12 +9,11 @@ import PromptInput from '../components/PromptInput.js'
 import { STATUS_ENUM, STATUS_MESSAGE } from "../common/status_enum.js";
 
 import { ToastContainer, toast } from 'react-toastify';
+import { ViewsContext } from "../contexts/ViewsContext.js";
 
 const TextOnly = () => {
-
-  const [tabIndex, setTabIndex] = React.useState(0);
   const [prompt, setPrompt] = React.useState("");
-  const [modalMessage, setModalMessage] = React.useState("");
+  const { viewIndex } = React.useContext(ViewsContext);   
 
   const notify = (messageType) => {
     console.log("Message type", messageType)
@@ -32,6 +31,37 @@ const TextOnly = () => {
 
   }
 
+  const verifyMessage = (message) => {
+    if (message === STATUS_ENUM.STARTED) {
+      return STATUS_ENUM.STARTED;
+    } else if (message === STATUS_ENUM.RUNNING) {
+      return STATUS_ENUM.RUNNING;
+    }
+    else if (message === STATUS_ENUM.INVALID) {
+      return STATUS_ENUM.INVALID;
+    }
+    else {
+      return STATUS_ENUM.ERROR;
+    }
+  }
+
+  const createFileUploadRequest = async (formData) => {
+    let messageType = STATUS_ENUM.ERROR;
+    try {
+      const response = await axios.post(`${enviroment}/upload`, formData);
+      console.log("Response", response.data)
+      messageType = verifyMessage(response.data);
+    } catch (error) {
+      console.error('Error creating project:', error);
+      messageType = STATUS_ENUM.ERROR;
+    }
+    finally {
+
+      notify(messageType);
+    }
+  }
+
+
   const creteProjectRequest = async () => {
 
     let messageType = STATUS_ENUM.ERROR;
@@ -44,17 +74,7 @@ const TextOnly = () => {
       const response = await axios.post(`${enviroment}/create/${prompt}`);
       console.log("Response", response.data)
       
-      if (response.data === STATUS_ENUM.STARTED) {
-        messageType = STATUS_ENUM.STARTED;
-      } else if (response.data === STATUS_ENUM.RUNNING) {
-        messageType = STATUS_ENUM.RUNNING;
-      }
-      else if (response.data === STATUS_ENUM.INVALID) {
-        messageType = STATUS_ENUM.INVALID;
-      }
-      else {
-        messageType = STATUS_ENUM.ERROR;
-      }
+      messageType = verifyMessage(response.data);
 
     } catch (error) {
       console.error('Error creating project:', error);
@@ -93,11 +113,11 @@ const TextOnly = () => {
                 Explore the infinity of possibilities with infinite zoom technology 
                 and let yourself be carried away by a visual experience that challenges the limits of imagination.
               </p>
-              {/* Se tabIndex for 0 coloca o PromptInput, se for 1 coloca o UploadButton */}
-              <UploadButton/>
-              <PromptInput request={creteProjectRequest} prompt={prompt} setPrompt={setPrompt}/>
-  
-              
+              {viewIndex === 0 ? 
+                <PromptInput request={creteProjectRequest} prompt={prompt} setPrompt={setPrompt}/>
+                :
+                <UploadButton request={createFileUploadRequest}/> 
+              }
             </div>
   
             <div className="relative lg:col-start-2">

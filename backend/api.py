@@ -1,4 +1,4 @@
-from fastapi import FastAPI, BackgroundTasks, HTTPException
+from fastapi import FastAPI, BackgroundTasks, HTTPException, File, UploadFile
 from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 import sys
@@ -105,8 +105,27 @@ async def create_fake_route(prompt: str, background_tasks: BackgroundTasks):
     
     return STARTED
 
+@app.post('/upload')
+async def upload_file(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
+    if g.is_running():
+        return RUNNING
+
+    try:
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        project_id = database.insert_project("Uploaded Initial Image", now, "Uploaded Initial Image")
+        
+        
+        background_tasks.add_task(g.sd_generate_image, None, project_id, file.file)
+        return STARTED
+    
+    except Exception as e:
+        print("Error: ", e)
+        return ERROR
+
+
 @app.post('/create/{prompt}')
-async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks):
+async def create_infinite_zoom(prompt: str, 
+                               background_tasks: BackgroundTasks):  
     
     if g.is_running():
         return RUNNING

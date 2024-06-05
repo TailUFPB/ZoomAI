@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router';
 import ZoomAILogo from '../public/assets/logo.svg'
+import { ViewsContext } from '../contexts/ViewsContext';
 
 const Navbar = () => {
     const [expanded, setExpanded] = useState(false);
-    const navigate = useNavigate();
+    const navigate = useNavigate(); 
+    const { setViewIndex } = useContext(ViewsContext);
 
     const gotoProjects = () => {
         navigate('/projects');
@@ -37,11 +39,11 @@ const Navbar = () => {
                     </div>
 
                     <nav className="hidden ml-10 mr-auto space-x-10 lg:ml-20 lg:space-x-12 md:flex md:items-center md:justify-start">
-                        <div href="#" title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400" style={{cursor: "pointer"}}> Text  </div>
+                        <div title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400" style={{cursor: "pointer"}} onClick={()=> {setViewIndex(0)}}> Text  </div>
 
-                        <div href="#" title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400" style={{cursor: "pointer"}}> Image </div>
+                        <div title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400" style={{cursor: "pointer"}} onClick={()=> {setViewIndex(1)}}> Image </div>
 
-                        <div href="#" title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400 " style={{cursor: "pointer"}}> About </div>
+                        <div title="" className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400 " style={{cursor: "pointer"}}> About </div>
 
                     </nav>
 
@@ -53,9 +55,9 @@ const Navbar = () => {
 
                 <nav className={expanded ? '' : 'hidden'}>
                     <div className="flex flex-col pt-8 pb-4 space-y-6">
-                        <div className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400" style={{cursor: "pointer"}}> Text </div>
+                        <div className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400" style={{cursor: "pointer"}} onClick={()=> {setViewIndex(0)}}> Text </div>
 
-                        <div className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400" style={{cursor: "pointer"}}> Image </div>
+                        <div className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400" style={{cursor: "pointer"}} onClick={()=> {setViewIndex(1)}}> Image </div>
 
                         <div className="text-base font-normal text-gray-400 transition-all duration-200 hover:text-blue-400" style={{cursor: "pointer"}}> About </div>
 

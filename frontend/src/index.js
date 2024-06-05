@@ -6,8 +6,13 @@ import './public/css/style.css';
 import './public/css/zoomai_style.css';
 import 'react-toastify/dist/ReactToastify.css';
 
+import { ViewsProvider } from './contexts/ViewsContext';
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <App />
+    <ViewsProvider>
+        <App />
+    </ViewsProvider>
+    
 );
 reportWebVitals();

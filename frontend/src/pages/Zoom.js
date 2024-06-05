@@ -13,7 +13,7 @@ function Project() {
     const [isLoading, setIsLoading] = useState(true);
     const [donwloading, setDownloading] = useState(false);
 
-    const project_id = location.state.project;
+    const project_id = 10 //location.state.project;
 
     const goBack = () => {
         // back to the previous page
@@ -51,32 +51,22 @@ function Project() {
             const loadImages = async () => {
                 if(donwloading) return;
                 try {
-                    const imagesFromLocalStorage = localStorage.getItem(`project_${project_id}`);
-                    if (imagesFromLocalStorage) {
-                        setImages(JSON.parse(imagesFromLocalStorage));
+                    setDownloading(true);
+                    const response = await axios.get(`${enviroment}/get_images/${project_id}`, {
+                        headers: { "ngrok-skip-browser-warning": "true" }
+                        });
+
+                    const images_base64 = response.data.images;
+
+                    const blobs = [];
+
+                    for(let i = 0; i < images_base64.length; i++) {
+                        const image = images_base64[i];
+                        const imageBlob = await fetch(`data:image/png;base64,${image}`).then(res => res.blob());
+                        blobs.push(imageBlob);
                     }
-                    else {
-                        const response = await axios.get(`${enviroment}/get_images/${project_id}`, {
-                            headers: { "ngrok-skip-browser-warning": "true" }
-                          });
 
-                        setDownloading(true);
-                        console.log("downloading images");
-
-                        const images_base64 = response.data.images;
-
-                        const blobs = [];
-
-                        for(let i = 0; i < images_base64.length; i++) {
-                            const image = images_base64[i];
-                            const imageBlob = await fetch(`data:image/png;base64,${image}`).then(res => res.blob());
-                            blobs.push(imageBlob);
-                        }
-
-                        localStorage.setItem(`project_${project_id}`, JSON.stringify(blobs.map(blob => URL.createObjectURL(blob))));
-                        setImages(blobs.map(blob => URL.createObjectURL(blob)));
-
-                    }
+                    setImages(blobs.map(blob => URL.createObjectURL(blob)));
 
                 } catch (error) {
                     console.error('Error loading images from ZIP:', error);

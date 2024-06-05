@@ -1,7 +1,18 @@
 import React from 'react';
 import { BsCloudUploadFill } from "react-icons/bs";
 
-const UploadButton = () => {
+const UploadButton = ({request}) => {
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file){
+      const formData = new FormData();
+      formData.append('file', file);  
+      formData.append('prompt', '');
+      console.log("Form data", formData);
+      request(formData);
+    }
+  }
+
     return (
       <div className="relative mt-8 rounded-full sm:mt-12 transition-all duration-200 bg-white sm:w-auto hover:opacity-90">
         <label htmlFor="file-upload" className="relative cursor-pointer">
@@ -13,7 +24,7 @@ const UploadButton = () => {
             </div>
             
           </div>
-          <input id="file-upload" name="file-upload" type="file" className="sr-only" />
+          <input id="file-upload" name="file-upload" type="file" className="sr-only"  accept="image/png, image/jpeg" onChange={handleFileUpload} />
         </label>
       </div>
     );

@@ -9,7 +9,6 @@ import Project from './pages/Zoom';
 import Home from './pages/Home';
 
 
-
 const Layout= ({children}) => (
   <>
     <Navbar />
@@ -23,11 +22,11 @@ function App() {
    return (
       <div style={{ backgroundColor: 'black' }}>
          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Layout> <Home /> </Layout>} />
-              <Route path='/projects' element={<AllProjects />} />
-              <Route path="/zoom" element={<Project />} />
-            </Routes>
+               <Routes>
+               <Route path="/" element={<Layout> <Home /> </Layout>} />
+               <Route path='/projects' element={<AllProjects />} />
+               <Route path="/zoom" element={<Project />} />
+               </Routes>
          </BrowserRouter>
       </div>
    );

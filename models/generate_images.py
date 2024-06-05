@@ -139,6 +139,10 @@ class Generator:
         if not prompts_array: 
             prompts_array = self.default_prompt
 
+        if init_image:  
+            init_image = Image.open(io.BytesIO(init_image))
+            self.custom_init_image = init_image 
+
         self.project_id = project_id
         
         prompts = {}
