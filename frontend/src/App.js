@@ -9,18 +9,19 @@ import Project from './pages/Zoom';
 import Home from './pages/Home';
 import About from './pages/About';
 
-const Layout = ({ children }) => (
-   <>
-      <Navbar />
-      {children}
-      <Footer />
-   </>
+
+const Layout= ({children}) => (
+  <>
+    <Navbar />
+    {children}
+    <Footer />
+  </>
 );
 
 
 function App() {
    return (
-      <div>
+      <div style={{ backgroundColor: 'black' }}>
          <BrowserRouter>
             <Routes>
                <Route path="/" element={<Layout> <Home /> </Layout>} />
