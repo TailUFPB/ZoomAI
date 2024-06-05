@@ -4,10 +4,10 @@ import { BsCloudUploadFill } from "react-icons/bs";
 const UploadButton = ({request}) => {
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
+    console.log("File", file )
     if (file){
       const formData = new FormData();
       formData.append('file', file);  
-      formData.append('prompt', '');
       console.log("Form data", formData);
       request(formData);
     }

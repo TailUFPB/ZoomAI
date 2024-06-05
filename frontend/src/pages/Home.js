@@ -48,7 +48,11 @@ const TextOnly = () => {
   const createFileUploadRequest = async (formData) => {
     let messageType = STATUS_ENUM.ERROR;
     try {
-      const response = await axios.post(`${enviroment}/upload`, formData);
+      const response = await axios.post(`${enviroment}/upload`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+        });
       console.log("Response", response.data)
       messageType = verifyMessage(response.data);
     } catch (error) {

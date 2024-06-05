@@ -114,8 +114,8 @@ async def upload_file(background_tasks: BackgroundTasks, file: UploadFile = File
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         project_id = database.insert_project("Uploaded Initial Image", now, "Uploaded Initial Image")
         
-        
-        background_tasks.add_task(g.sd_generate_image, None, project_id, file.file)
+        file_content = await file.read()
+        background_tasks.add_task(g.sd_generate_image, None, project_id, file_content)
         return STARTED
     
     except Exception as e:
