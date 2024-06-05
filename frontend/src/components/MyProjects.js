@@ -10,7 +10,8 @@ import { GiClick } from "react-icons/gi";
 import { ServiceData } from "./Constants/constants";
 import { Link, useNavigate } from 'react-router-dom';
 import ReactLoading from 'react-loading';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
 
 const AllProjects = () => {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ const AllProjects = () => {
         <p className='tmt-4 text-lg font-normal text-gray-400 sm:mt-8'>Clarity gives you the blocks & components you need to create a truly professional website, landing page or admin panel for your SaaS.</p>
       </div>
 
-      <div className='flex items-center justify-center gap-6 flex-grow' style={{padding: "30px", paddingInlineEnd: "60px", paddingInlineStart: "60px",  position: "relative",bottom: "100px", userSelect: "none"}}>
+      <div className='flex items-center justify-center gap-6 flex-grow' style={{ position: "relative",bottom: "50px", userSelect: "none"}}>
         <Swiper
           style={{
             '--swiper-navigation-color': '#fff',
@@ -64,7 +65,7 @@ const AllProjects = () => {
 
             <div className="absolute inset-0 bg-black opacity-10 group-hover:opacity-50"/>
             <div className=" relative flex flex-col gap-3 p-10">
-              <img src={item.backgroundImage} alt={item.title} className="object-cover project-image" onClick={()=>{gotoZoom(item.id)}}/>
+              <img src={item.backgroundImage} alt={item.title} className="project-image" onClick={()=>{gotoZoom(item.id)}}/>
               <div className="absolute left-0 p-4 z-20 flex items-start justify-between w-full h-full " style={{bottom: "0px", left: "0px", fontSize: "18px"}}>
                 <h1 className="text-2xl font-bold">{item.title}</h1>
                 {/* <GiClick  className="redirect-to-project" size={20} /> */}
