@@ -9,12 +9,13 @@ import Project from './pages/Zoom';
 import Home from './pages/Home';
 import About from './pages/About';
 
-const Layout = ({ children }) => (
-   <>
-      <Navbar />
-      {children}
-      <Footer />
-   </>
+
+const Layout= ({children}) => (
+  <>
+    <Navbar />
+    {children}
+    <Footer />
+  </>
 );
 
 

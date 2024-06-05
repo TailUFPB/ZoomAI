@@ -3,6 +3,7 @@ import foto_fernanda from "../public/assets/fernanda.jpg";
 import foto_kaiky from "../public/assets/kaiky.jpeg";
 import foto_dantas from "../public/assets/dantas.jpeg";
 import foto_puca from "../public/assets/pucavaz.jpeg";
+import foto_maria from "../public/assets/maria.jpeg";
 
 function About() {
 
@@ -30,7 +31,7 @@ function About() {
         },
         {
             nome: "Maria Moura",
-            foto: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=3&amp;h=750&amp;w=1260",
+            foto: foto_maria,
             cargo: "Front-End Developer",
             linkedin: "https://www.linkedin.com/in/mariam0ura/",
             github: "https://github.com/MariaM0ura"
