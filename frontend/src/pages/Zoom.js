@@ -13,7 +13,7 @@ function Project() {
     const [isLoading, setIsLoading] = useState(true);
     const [donwloading, setDownloading] = useState(false);
 
-    const project_id = 21//location.state.project;
+    const project_id = location.state.project;
 
     const goBack = () => {
         // back to the previous page

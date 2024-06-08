@@ -315,6 +315,8 @@ class Generator:
 
         with open(self.status_path, 'w') as f:
             f.write("0")
+        
+        self.image_order = 0
 
 
 

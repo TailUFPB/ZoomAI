@@ -86,6 +86,7 @@ const TextOnly = () => {
     }
     finally {
       notify(messageType);
+      setPrompt("");
     } 
   }
 
