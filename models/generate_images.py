@@ -265,9 +265,13 @@ class Generator:
         finish_time = datetime.now()
         print(f"Time to generate images: {finish_time - start_time} seconds")
 
-        self.finish_run()
+        self.finish_run(project_id)
 
         return 200
+
+    def get_prompt_from_image(self, image):
+        ...
+        return image_context
 
     def shrink_and_paste_on_blank(self, current_image, mask_width):
 
@@ -310,13 +314,14 @@ class Generator:
             f.write("1")
 
         
-    def finish_run(self):
+    def finish_run(self, p_id):
         self.end_thread = True
 
         with open(self.status_path, 'w') as f:
             f.write("0")
         
         self.image_order = 0
+        self.db.update_ready(p_id)
 
 
 

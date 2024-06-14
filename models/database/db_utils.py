@@ -19,7 +19,7 @@ class Database:
 
     def create_db(self):
         self.cursor.execute('''
-            CREATE TABLE IF NOT EXISTS projects (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, created_at TEXT, prompts TEXT)
+            CREATE TABLE IF NOT EXISTS projects (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, created_at TEXT, prompts TEXT, ready INTEGER)
         ''')
 
         self.cursor.execute('''
@@ -32,7 +32,7 @@ class Database:
 
     def insert_project(self, name, created_at, prompts):
         self.cursor.execute('''
-            INSERT INTO projects (name, created_at, prompts) VALUES (?, ?, ?)
+            INSERT INTO projects (name, created_at, prompts, ready) VALUES (?, ?, ?, 0)
         ''', (name, created_at, prompts))
 
         self.conn.commit()
@@ -52,10 +52,17 @@ class Database:
         ''', (project_id, sqlite3.Binary(image), image_order))
 
         self.conn.commit()
+    
+    def update_ready(self, project_id):
+        self.cursor.execute('''
+            UPDATE projects SET ready = 1 WHERE id = ?
+        ''', (project_id,))
+        self.conn.commit()
+
 
     def get_all_projects(self):
         self.cursor.execute('''
-            SELECT projects.id, projects.name, images.image
+            SELECT projects.id, projects.name, images.image, projects.ready
             FROM projects
             LEFT JOIN (
                 SELECT project_id, image FROM images
@@ -72,7 +79,8 @@ class Database:
                 projects_with_images[project_id] = {
                     'id': project_id,
                     'name': row[1],
-                    'cover': row[2]
+                    'cover': row[2],
+                    'ready': row[3]
                 }
         return projects_with_images
 
