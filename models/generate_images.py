@@ -321,8 +321,7 @@ class Generator:
             f.write("0")
         
         self.image_order = 0
-        self.db.update_ready(p_id)
-
-
+        finish_database = Database()
+        finish_database.update_ready(p_id)
 
     
