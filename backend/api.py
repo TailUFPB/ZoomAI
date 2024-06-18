@@ -112,10 +112,19 @@ async def upload_file(background_tasks: BackgroundTasks, file: UploadFile = File
 
     try:
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        project_id = database.insert_project("Uploaded Initial Image", now, "Uploaded Initial Image")
         
         file_content = await file.read()
-        background_tasks.add_task(g.sd_generate_image, None, project_id, file_content)
+        start_prompt = await g.get_image_description(BytesIO(file_content))
+
+        print("Start Prompt : ", start_prompt)
+
+        prompt_gpt = await g.gpt_prompt_create(start_prompt)
+        prompt_text = prompt_gpt[0][1]
+
+        project_id = database.insert_project(start_prompt, now, prompt_text)
+
+
+        background_tasks.add_task(g.sd_generate_image, prompt_gpt, project_id, file_content)
         return STARTED
     
     except Exception as e:

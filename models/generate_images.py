@@ -1,4 +1,6 @@
 from diffusers import StableDiffusionInpaintPipeline, EulerAncestralDiscreteScheduler
+from transformers import BlipProcessor, BlipForConditionalGeneration
+from compel import Compel
 from database.db_utils import Database
 from openai import OpenAI
 from PIL import Image
@@ -23,7 +25,7 @@ class Generator:
         #os.environ["OPENAI_API_KEY"] 
         
         self.negative_prompt = "frames, borderline, text, charachter, duplicate, error, out of frame, watermark, low quality, ugly, deformed, blur"
-        self.default_prompt = [[0, 'An underwater scenario: a forest of black, twisted corals, with strange and menacing sea creatures moving among them. The corals have luminescent patterns resembling fractals, casting a ghostly light in the darkness. The street-level view shows a surreal and oppressive landscape, with ancient and mysterious underwater structures protruding from the ocean floor. The resolution is 8K, providing hyper-realistic details, while the style harkens back to the work of Simon Stålenhag but with a darker and more sinister atmosphere.']]
+        self.default_prompt = [[0, '']]
         self.num_outpainting_steps = 40
         self.guidance_scale = 7
         self.num_inference_steps = 50
@@ -129,6 +131,16 @@ class Generator:
         except ValueError:
             return mensagem
 
+    async def get_image_description(self, image):
+        processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
+        model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large").to("cuda")
+
+        raw_image = Image.open(image).convert('RGB')
+        inputs = processor(raw_image, return_tensors="pt").to("cuda")
+        out = model.generate(**inputs, max_new_tokens=1000)
+
+        return processor.decode(out[0], skip_special_tokens=True)
+
     def sd_generate_image(
         self, 
         prompts_array, project_id, init_image=None,
@@ -163,6 +175,9 @@ class Generator:
             pipe.scheduler.config)
         pipe = pipe.to("cuda")
 
+
+        compel = Compel(tokenizer=pipe.tokenizer, text_encoder=pipe.text_encoder)
+        
         pipe.safety_checker = None
         pipe.enable_attention_slicing()
 
@@ -181,7 +196,8 @@ class Generator:
                 (width, height), resample=Image.LANCZOS)
         else:
             start_time = datetime.now()
-            init_images = pipe(prompt=prompts[min(k for k in prompts.keys() if k >= 0)],
+            initial_conditioning = compel(prompts[min(k for k in prompts.keys() if k >= 0)])
+            init_images = pipe(prompt_embeds=initial_conditioning,
                             negative_prompt=self.negative_prompt,
                             image=current_image,
                             guidance_scale=self.guidance_scale,
@@ -221,7 +237,8 @@ class Generator:
 
             # inpainting step
             current_image = current_image.convert("RGB")
-            images = pipe(prompt=prompts[max(k for k in prompts.keys() if k <= i)],
+            conditioning = compel(prompts[max(k for k in prompts.keys() if k <= i)])
+            images = pipe(prompt_embeds=conditioning,
                         negative_prompt=self.negative_prompt,
                         image=current_image,
                         guidance_scale=self.guidance_scale,
@@ -265,9 +282,13 @@ class Generator:
         finish_time = datetime.now()
         print(f"Time to generate images: {finish_time - start_time} seconds")
 
-        self.finish_run()
+        self.finish_run(project_id)
 
         return 200
+
+    def get_prompt_from_image(self, image):
+        ...
+        return image_context
 
     def shrink_and_paste_on_blank(self, current_image, mask_width):
 
@@ -310,14 +331,14 @@ class Generator:
             f.write("1")
 
         
-    def finish_run(self):
+    def finish_run(self, p_id):
         self.end_thread = True
 
         with open(self.status_path, 'w') as f:
             f.write("0")
         
         self.image_order = 0
-
-
+        finish_database = Database()
+        finish_database.update_ready(p_id)
 
     

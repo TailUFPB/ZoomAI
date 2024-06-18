@@ -23,8 +23,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "HOST=0.0.0.0 react-scripts start",
+    "build": "HOST=0.0.0.0 react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "watch-css": "tailwindcss -i ./src/public/css/input.css -o ./src/public/css/style.css --watch"
