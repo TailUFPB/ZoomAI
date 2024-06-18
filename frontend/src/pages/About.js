@@ -11,12 +11,13 @@ function About() {
 
     const autors = [
         {
-            nome: "Allejandro",
-            foto: foto_allejandro,
-            cargo: "Back-End Developer",
-            linkedin: "https://www.linkedin.com/in/allej-sousa/",
-            github: "https://github.com/AllejandroSousa/"
+            nome: "Frankley Kaiky",
+            foto: foto_kaiky,
+            cargo: "Product Manager",
+            linkedin: "https://www.linkedin.com/in/franky03/",
+            github: "https://github.com/Franky03"
         },
+        
         {
             nome: "Fernanda Azevedo",
             foto: foto_fernanda,
@@ -25,25 +26,11 @@ function About() {
             github: "https://github.com/fernandadants"
         },
         {
-            nome: "Frankley Kaiky",
-            foto: foto_kaiky,
-            cargo: "Product Manager",
-            linkedin: "https://www.linkedin.com/in/franky03/",
-            github: "https://github.com/Franky03"
-        },
-        {
-            nome: "Maria Moura",
-            foto: foto_maria,
-            cargo: "Front-End Developer",
-            linkedin: "https://www.linkedin.com/in/mariam0ura/",
-            github: "https://github.com/MariaM0ura"
-        },
-        {
-            nome: "João Dantas",
-            foto: foto_dantas,
+            nome: "Allejandro",
+            foto: foto_allejandro,
             cargo: "Back-End Developer",
-            linkedin: "https://www.linkedin.com/in/joao-victor-dantas/",
-            github: "https://github.com/theBlueNautilus"
+            linkedin: "https://www.linkedin.com/in/allej-sousa/",
+            github: "https://github.com/AllejandroSousa/"
         },
         {
             nome: "Pucavaz",
@@ -52,6 +39,22 @@ function About() {
             linkedin: "https://www.linkedin.com/in/pucavaz/",
             github: "http://github.com/PucaVaz/"
         },
+        {
+            nome: "Maria Moura",
+            foto: foto_maria,
+            cargo: "Front-End Developer",
+            linkedin: "https://www.linkedin.com/in/mariam0ura/",
+            github: "https://github.com/MariaM0ura"
+        },
+        
+        {
+            nome: "João Dantas",
+            foto: foto_dantas,
+            cargo: "Back-End Developer",
+            linkedin: "https://www.linkedin.com/in/joao-victor-dantas/",
+            github: "https://github.com/theBlueNautilus"
+        },
+        
     ]
 
     let autorsList = [];

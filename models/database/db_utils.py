@@ -29,6 +29,25 @@ class Database:
         self.conn.commit()
 
         print('database created')
+    
+    def delete_project(self, p_id):
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute('''
+            DELETE FROM images WHERE project_id = ?
+            ''', (p_id,))
+            
+            cursor.execute('''
+            DELETE FROM projects WHERE id = ?
+            ''', (p_id,))
+            
+            self.conn.commit()
+            print("Project and associated images deleted successfully.")
+        except Exception as e:
+            self.conn.rollback()
+            print(f"An error occurred: {e}")
+        finally:
+            cursor.close()
 
     def insert_project(self, name, created_at, prompts):
         self.cursor.execute('''

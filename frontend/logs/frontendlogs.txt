@@ -1,21 +1,50 @@
 nohup: ignorando entrada
 
 > frontend@0.1.0 start
-> react-scripts start
+> HOST=0.0.0.0 react-scripts start
 
-(node:1586541) [DEP_WEBPACK_DEV_SERVER_ON_AFTER_SETUP_MIDDLEWARE] DeprecationWarning: 'onAfterSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
+Attempting to bind to HOST environment variable: 0.0.0.0
+If this was unintentional, check that you haven't mistakenly set it in your shell.
+Learn more here: https://cra.link/advanced-config
+
+(node:2489383) [DEP_WEBPACK_DEV_SERVER_ON_AFTER_SETUP_MIDDLEWARE] DeprecationWarning: 'onAfterSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
 (Use `node --trace-deprecation ...` to show where the warning was created)
-(node:1586541) [DEP_WEBPACK_DEV_SERVER_ON_BEFORE_SETUP_MIDDLEWARE] DeprecationWarning: 'onBeforeSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
+(node:2489383) [DEP_WEBPACK_DEV_SERVER_ON_BEFORE_SETUP_MIDDLEWARE] DeprecationWarning: 'onBeforeSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
 Starting the development server...
 
-Compiled successfully!
+Compiled with warnings.
 
-You can now view frontend in the browser.
+[eslint] 
+src/components/MyProjects.js
+  Line 7:10:   'RxArrowTopRight' is defined but never used  no-unused-vars
+  Line 8:10:   'GiClick' is defined but never used          no-unused-vars
+  Line 13:17:  'useState' is defined but never used         no-unused-vars
+  Line 14:8:   'axios' is defined but never used            no-unused-vars
 
-  http://localhost:3000
+src/components/Navbar.js
+  Line 74:29:  The href attribute is required for an anchor to be keyboard accessible. Provide a valid, navigable address as the href value. If you cannot provide an href, but still need the element to resemble a link, use a button and change it with appropriate styles. Learn more: https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/HEAD/docs/rules/anchor-is-valid.md  jsx-a11y/anchor-is-valid
 
-Note that the development build is not optimized.
-To create a production build, use npm run build.
+src/pages/Zoom.js
+  Line 82:8:    React Hook useEffect has missing dependencies: 'donwloading', 'location.state', and 'navigate'. Either include them or remove the dependency array                                                                                                                                                                                                                 react-hooks/exhaustive-deps
+  Line 99:21:   img elements must have an alt prop, either with meaningful text, or an empty string for decorative images                                                                                                                                                                                                                                                          jsx-a11y/alt-text
+  Line 107:25:  The href attribute requires a valid value to be accessible. Provide a valid, navigable address as the href value. If you cannot provide a valid href, but still need the element to resemble a link, use a button and change it with appropriate styles. Learn more: https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/HEAD/docs/rules/anchor-is-valid.md  jsx-a11y/anchor-is-valid
 
-webpack compiled successfully
-Terminated
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+WARNING in [eslint] 
+src/components/MyProjects.js
+  Line 7:10:   'RxArrowTopRight' is defined but never used  no-unused-vars
+  Line 8:10:   'GiClick' is defined but never used          no-unused-vars
+  Line 13:17:  'useState' is defined but never used         no-unused-vars
+  Line 14:8:   'axios' is defined but never used            no-unused-vars
+
+src/components/Navbar.js
+  Line 74:29:  The href attribute is required for an anchor to be keyboard accessible. Provide a valid, navigable address as the href value. If you cannot provide an href, but still need the element to resemble a link, use a button and change it with appropriate styles. Learn more: https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/HEAD/docs/rules/anchor-is-valid.md  jsx-a11y/anchor-is-valid
+
+src/pages/Zoom.js
+  Line 82:8:    React Hook useEffect has missing dependencies: 'donwloading', 'location.state', and 'navigate'. Either include them or remove the dependency array                                                                                                                                                                                                                 react-hooks/exhaustive-deps
+  Line 99:21:   img elements must have an alt prop, either with meaningful text, or an empty string for decorative images                                                                                                                                                                                                                                                          jsx-a11y/alt-text
+  Line 107:25:  The href attribute requires a valid value to be accessible. Provide a valid, navigable address as the href value. If you cannot provide a valid href, but still need the element to resemble a link, use a button and change it with appropriate styles. Learn more: https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/HEAD/docs/rules/anchor-is-valid.md  jsx-a11y/anchor-is-valid
+
+webpack compiled with 1 warning
