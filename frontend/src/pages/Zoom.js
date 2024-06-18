@@ -51,7 +51,18 @@ function Project() {
             console.log("project_id", project_id)
             const loadImages = async () => {
                 if(donwloading) return;
+
+                const storageKey = `project-${project_id}`;
+                const storedImages = sessionStorage.getItem(storageKey);
+
+                if (storedImages) {
+                    setImages(JSON.parse(storedImages));
+                    setIsLoading(false);
+                    return;
+                }
+
                 try {
+                    
                     setDownloading(true);
                     const response = await axios.get(`${enviroment}/get_images/${project_id}`, {
                         headers: { "ngrok-skip-browser-warning": "true" }
@@ -67,7 +78,10 @@ function Project() {
                         blobs.push(imageBlob);
                     }
 
-                    setImages(blobs.map(blob => URL.createObjectURL(blob)));
+                    const imagesUrls = blobs.map(blob => URL.createObjectURL(blob));
+
+                    setImages(imagesUrls);
+                    sessionStorage.setItem(storageKey, JSON.stringify(imagesUrls));
 
                 } catch (error) {
                     console.error('Error loading images from ZIP:', error);

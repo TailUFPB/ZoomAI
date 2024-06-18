@@ -30,6 +30,16 @@ class Database:
 
         print('database created')
     
+    def get_project_count(self):
+
+        self.cursor.execute('''
+            SELECT COUNT(*) FROM projects
+        ''')
+
+        count = self.cursor.fetchone()[0]
+
+        return count
+    
     def delete_project(self, p_id):
         try:
             cursor = self.conn.cursor()

@@ -105,6 +105,11 @@ async def create_fake_route(prompt: str, background_tasks: BackgroundTasks):
     
     return STARTED
 
+@app.get('/project_count')
+async def get_project_count():
+    count = database.get_project_count()
+    return {"count": count}
+
 @app.post('/upload')
 async def upload_file(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
     if g.is_running():
