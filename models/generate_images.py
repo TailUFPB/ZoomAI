@@ -238,8 +238,9 @@ class Generator:
             # inpainting step
             current_image = current_image.convert("RGB")
             conditioning = compel(prompts[max(k for k in prompts.keys() if k <= i)])
+            negative_conditioning = compel.build_conditioning_tensor(self.negative_prompt)
             images = pipe(prompt_embeds=conditioning,
-                        negative_prompt=self.negative_prompt,
+                        negative_prompt_embeds=negative_conditioning,
                         image=current_image,
                         guidance_scale=self.guidance_scale,
                         height=height,

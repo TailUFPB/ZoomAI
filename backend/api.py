@@ -131,28 +131,18 @@ async def upload_file(background_tasks: BackgroundTasks, file: UploadFile = File
         print("Error: ", e)
         return ERROR
 
-
 @app.post('/create/{prompt}')
-async def create_infinite_zoom(prompt: str, 
-                               background_tasks: BackgroundTasks):  
+async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks):  
     
     if g.is_running():
         return RUNNING
-    
+    prompt = str(prompt).strip()
     print("Is running: ", g.is_running())
-    for index, word in enumerate(prompt.split()):
-        if (len(word) <= 30):
-            if (verifyWord(word) or word.isnumeric()):
-                continue
-            else:
-                return INVALID
-        else:
-            return INVALID
     
     try:
         prompt_gpt = await g.gpt_prompt_create(prompt)
         prompt_text = prompt_gpt[0][1]
-        
+        print("prompt text", prompt_text)
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         project_id = database.insert_project(prompt, now, prompt_text)
         
@@ -160,7 +150,7 @@ async def create_infinite_zoom(prompt: str,
 
         return STARTED
     
-    except Exception as e:  
+    except Exception as e:
         print("Error: ", e)
         return ERROR
 

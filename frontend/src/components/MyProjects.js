@@ -12,6 +12,7 @@ import { IoPlay } from "react-icons/io5";
 import { Link, useNavigate } from 'react-router-dom';
 import ReactLoading from 'react-loading';
 import React, { useEffect, useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
 
 import axios from 'axios';
 
@@ -47,11 +48,28 @@ const AllProjects = () => {
   }, []);
   
   const gotoZoom = (project) => {
-    sessionStorage.setItem('projectId', project);
-    navigate('/zoom', { state: { projectId: project } });
+    if(project.ready){
+      sessionStorage.setItem('projectId', project.id);
+      navigate('/zoom', { state: { projectId: project.id } });
+    }
+    else {
+      toast.info("This project is not ready yet");
+    }
   }
 
   return (
+    <>
+    <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        limit={3}
+        draggable
+        theme="dark"
+      />
     <div className='flex flex-col h-screen bg-black m:pb-16 lg:pb-20 xl:pb-24' style={{minHeight: "700px"}}>
 
       <div className='flex items-center justify-center flex-col' style={{marginTop: "40px", marginBottom:"100px"}}>
@@ -104,7 +122,7 @@ const AllProjects = () => {
             <img src={project.cover && project.cover !== '0' ? project.cover : CoverDefault} 
                 alt={project.name} 
                 className="project-image" 
-                onClick={() => { gotoZoom(project.id) }} 
+                onClick={() => { gotoZoom(project) }} 
                 style={{ filter: project.cover === '0' ? 'blur(5px)' : 'none' }}/>
               <div className="absolute left-0 p-4 flex justify-between w-full" style={{bottom: "0px", left: "0px", fontSize: "18px"}}>
                 <h1 className="font-bold">{project.name}</h1>
@@ -129,6 +147,7 @@ const AllProjects = () => {
       </div>
 
     </div>
+    </>
   );
 };
 
