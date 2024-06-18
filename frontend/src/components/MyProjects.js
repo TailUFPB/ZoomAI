@@ -46,15 +46,10 @@ const AllProjects = () => {
     fetchProjects();
   }, []);
   
-    const gotoZoom = (projectId) => {
-      if (projectId === undefined || projectId === null) {
-        console.log('FUDEUUUUUU')
-        return;
-      }
-      navigate(`/zoom`, { state: { projectId } });
-    };
-
-    //fazer o decode do base64
+  const gotoZoom = (project) => {
+    sessionStorage.setItem('projectId', project);
+    navigate('/zoom', { state: { projectId: project } });
+  }
 
   return (
     <div className='flex flex-col h-screen bg-black m:pb-16 lg:pb-20 xl:pb-24' style={{minHeight: "700px"}}>
@@ -120,7 +115,7 @@ const AllProjects = () => {
           </div>
             
           </SwiperSlide>
-          ))}
+          )).reverse()}
         </Swiper>
         )}
       </div>

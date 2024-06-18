@@ -4,6 +4,7 @@ import axios from 'axios';
 import ReactLoading from 'react-loading';
 import {enviroment} from '../common/enviroment';
 
+
 function Project() {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const navigate = useNavigate();
@@ -13,11 +14,11 @@ function Project() {
     const [isLoading, setIsLoading] = useState(true);
     const [donwloading, setDownloading] = useState(false);
 
-    const project_id = location.state.projectId;
+    const project_id = location.state?.projectId || sessionStorage.getItem('projectId');
 
     const goBack = () => {
         // back to the previous page
-        navigate(-1);
+        navigate('/projects');
     }
 
     const handleScroll = (event) => {
