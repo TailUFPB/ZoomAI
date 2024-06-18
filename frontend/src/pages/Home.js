@@ -105,10 +105,10 @@ const TextOnly = () => {
         theme="dark"
       />
       
-      <section className="relative overflow-hidden bg-black sm:pb-16 lg:pb-20 xl:pb-24 ">
+      <section className="relative overflow-hidden bg-black sm:pb-16 lg:pb-20 xl:pb-24 " style={{userSelect: 'none'}}>
         
         <div className="px-4 mx-auto relativea sm:px-6 lg:px-8 max-w-7xl ">
-          <div className="grid items-center grid-cols-1 gap-y-12 lg:grid-cols-2 gap-x-16" style={{position: "relative", bottom: "50px", left: "50px"}}>
+          <div className="grid items-center grid-cols-1 gap-y-12 lg:grid-cols-2 gap-x-16" style={{position: "relative", bottom: "10px", left: "50px"}}>
             <div>
               <h1 className="text-4xl font-bold text-white sm:text-5xl lg:text-6xl xl:text-7xl">
                 ZoomAI

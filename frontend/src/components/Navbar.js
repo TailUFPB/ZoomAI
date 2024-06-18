@@ -21,12 +21,12 @@ const Navbar = () => {
     }
     
     return (
-        <header className="py-4 bg-black sm:py-6">
+        <header className="py-4 bg-black sm:py-6" style={{userSelect: 'none'}}>
             <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between">
                     <div className="shrink-0 items-center">
                         <div title="" className="flex " onClick={gotoHome}>
-                            <img className="w-auto" src={ZoomAILogo} alt="" />
+                            <img className="w-auto" src={ZoomAILogo} alt="" style={{userSelect: 'none'}}/>
                         </div>
                     </div>
 
