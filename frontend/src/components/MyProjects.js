@@ -32,16 +32,6 @@ const getProjects = async () => {
   }
 }
 
-const getCount = async () => {
-  try {
-    const response = await axios.get(`${enviroment}/get_count`);
-    return response.data.count;
-  } catch (error) {
-    console.error(error);
-    return 0;
-  }
-}
-
 const AllProjects = () => {
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
@@ -49,18 +39,11 @@ const AllProjects = () => {
 
   useEffect(() => {
     const fetchProjects = async () => {
-      const projects_storage = sessionStorage.getItem('projects');
-      const total_projects = await getCount();
-      if(projects_storage && JSON.parse(projects_storage).length === total_projects){
-        setProjects(JSON.parse(projects_storage));
-        setLoading(false);
-        return;
-      } else {
-        const projects = await getProjects();
-        setProjects(projects);
-        setLoading(false);
-        sessionStorage.setItem('projects', JSON.stringify(projects));
-      }
+    
+      const projects = await getProjects();
+      setProjects(projects);
+      setLoading(false);
+    
     };
 
     fetchProjects();

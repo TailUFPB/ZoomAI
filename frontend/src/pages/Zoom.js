@@ -10,7 +10,7 @@ function Project() {
     const navigate = useNavigate();
     const location = useLocation();
     const [images, setImages] = useState([]);
-    const [isMedium, setIsMedium] = useState(window.matchMedia("(min-width: 1600px)").matches);
+    const [isMedium, setIsMedium] = useState(window.matchMedia("(min-width: 2000px)").matches);
     const [isLoading, setIsLoading] = useState(true);
     const [donwloading, setDownloading] = useState(false);
 
@@ -33,15 +33,17 @@ function Project() {
 
     useEffect(() => {
         const handleResize = () => {
-            setIsMedium(window.matchMedia("(min-width: 1600px)").matches);
+            setIsMedium(window.matchMedia("(min-width: 2000px)").matches);
         };
+
+        setIsMedium(window.matchMedia("(min-width: 2000px)").matches);
 
         window.addEventListener('resize', handleResize);
 
         return () => {
             window.removeEventListener('resize', handleResize);
         };
-    }, []);
+    }, [window.innerWidth]);
 
     useEffect(() => {
         if (!location.state || !location.state.projectId) {
