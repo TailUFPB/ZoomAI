@@ -4,21 +4,57 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
-import { RxArrowTopRight } from "react-icons/rx";
-import { GiClick } from "react-icons/gi";
+import CoverDefault from '../public/assets/cover_default.jpg';
 
-import { ServiceData } from "./Constants/constants";
+import { IoPlay } from "react-icons/io5";
+
+
 import { Link, useNavigate } from 'react-router-dom';
 import ReactLoading from 'react-loading';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+
 import axios from 'axios';
+
+import { enviroment } from '../common/enviroment';
+
+const getProjects = async () => {
+  try {
+    const response = await axios.get(`${enviroment}/get_projects`);
+    const projectsData = Object.values(response.data)
+    return projectsData.map(project => ({
+      ...project,
+      cover: project.cover ? `data:image/png;base64,${project.cover}` : null,
+    }));
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
 
 const AllProjects = () => {
   const navigate = useNavigate();
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const gotoZoom = (project) => {
-    navigate(`/zoom`, {state: {project}});
-  }
+  useEffect(() => {
+    const fetchProjects = async () => {
+      const projects = await getProjects();
+      setProjects(projects);
+      setLoading(false);
+    };
+
+    fetchProjects();
+  }, []);
+  
+    const gotoZoom = (projectId) => {
+      if (projectId === undefined || projectId === null) {
+        console.log('FUDEUUUUUU')
+        return;
+      }
+      navigate(`/zoom`, { state: { projectId } });
+    };
+
+    //fazer o decode do base64
 
   return (
     <div className='flex flex-col h-screen bg-black m:pb-16 lg:pb-20 xl:pb-24' style={{minHeight: "700px"}}>
@@ -29,6 +65,9 @@ const AllProjects = () => {
       </div>
 
       <div className='flex items-center justify-center' style={{ position: "relative",bottom: "50px", userSelect: "none"}}>
+      {loading ? (
+        <ReactLoading type='spin' color='#fff' height={50} width={50} />
+      ) : (
         <Swiper
           style={{
             '--swiper-navigation-color': '#fff',
@@ -56,28 +95,34 @@ const AllProjects = () => {
           navigation={true}
           className=""
         >
-          {ServiceData.map((item) => (
-          <SwiperSlide key={item.title}>
+          {projects.map((project) => (
+          <SwiperSlide key={project.id}>
             
-            <div className=" flex flex-col mb-20 group relative text-white px-6 py-8 h-[250px] w-[215px] lg:h-[400px] lg:w-[350px] overflow-hidden cursor-pointer">
-              
-            <div className="absolute bg-cover bg-center"/>
-
+            <div className=" flex flex-col mb-20 group relative text-white px-6 py-8 h-[250px] w-[215px] lg:h-[400px] lg:w-[350px] overflow-hidden cursor-pointer"> 
+            <div className="absolute bg-cover bg-center"  
+              style={{ 
+                backgroundImage: project.cover && project.cover !== '0' ? `url(${project.cover})` : `url(${CoverDefault})`, 
+                filter: project.cover === '0' ? 'blur(5px)' : 'none' 
+              }}/>
             <div className="absolute bg-black opacity-10 group-hover:opacity-50"/>
             <div className="relative flex flex-col p-10">
-              <img src={item.backgroundImage} alt={item.title} className="project-image" onClick={()=>{gotoZoom(item.id)}}/>
+            <img src={project.cover && project.cover !== '0' ? project.cover : CoverDefault} 
+                alt={project.name} 
+                className="project-image" 
+                onClick={() => { gotoZoom(project.id) }} 
+                style={{ filter: project.cover === '0' ? 'blur(5px)' : 'none' }}/>
               <div className="absolute left-0 p-4 flex justify-between w-full" style={{bottom: "0px", left: "0px", fontSize: "18px"}}>
-                <h1 className="font-bold">{item.title}</h1>
+                <h1 className="font-bold">{project.name}</h1>
                 {/* <GiClick  className="redirect-to-project" size={20} /> */}
-                <ReactLoading type='spin' height={"30px"} width={"30px"}/>
+                {project.ready === 1 ?  <IoPlay size={35}  /> : <ReactLoading type='spin' height={"30px"} width={"30px"} />}
               </div>
             </div>
-            
           </div>
             
           </SwiperSlide>
           ))}
         </Swiper>
+        )}
       </div>
 
       <div className="flex justify-center" style={{userSelect: 'none', position: 'fixed', bottom: 50, width: '100%'}}>
