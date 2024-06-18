@@ -7,7 +7,7 @@ class TestClass:
     def __init__(self) -> None:
         self.file_status_path = "status"
 
-    def generate_images(self,prompt):
+    def generate_images(self,prompt): 
         self.start_running()
         
         for i in range(50):
