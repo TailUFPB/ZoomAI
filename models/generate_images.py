@@ -76,7 +76,9 @@ class Generator:
                 self.image_order += 1
             else:
                 self.mutex.release()
-                if self.end_thread: break
+                if self.end_thread:
+                    print("End thread signal received.")
+                    break
 
     def findAvailableFilename(self, base_name):
         # Check if the path with the name is already exist
@@ -283,13 +285,16 @@ class Generator:
         finish_time = datetime.now()
         print(f"Time to generate images: {finish_time - start_time} seconds")
 
+        self.end_thread = True 
+
+        for _ in range(len(self.all_frames)):
+            self.sem.release()
+
+        consumer_thread.join()
+
         self.finish_run(project_id)
 
         return 200
-
-    def get_prompt_from_image(self, image):
-        ...
-        return image_context
 
     def shrink_and_paste_on_blank(self, current_image, mask_width):
 
@@ -327,13 +332,13 @@ class Generator:
     def start_run(self):
         self.end_thread = False
         self.all_frames = []
+        self.image_order = 0
         
         with open(self.status_path, 'w') as f:
             f.write("1")
 
         
     def finish_run(self, p_id):
-        self.end_thread = True
 
         with open(self.status_path, 'w') as f:
             f.write("0")

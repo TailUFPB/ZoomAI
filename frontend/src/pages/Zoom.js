@@ -23,11 +23,12 @@ function Project() {
 
     const handleScroll = (event) => {
         const delta = event.deltaY;
-    
         if (delta < 0 && currentImageIndex < images.length - 1) {
-            setCurrentImageIndex(Math.min(currentImageIndex + 1, images.length - 1)); // Move para a próxima imagem ou volta para o final
+            // Scroll para baixo (delta positivo), avança para a próxima imagem
+            setCurrentImageIndex(currentImageIndex + 1);
         } else if (delta > 0 && currentImageIndex > 0) {
-            setCurrentImageIndex(Math.max(currentImageIndex - 1, 0)); // Move para a imagem anterior ou volta para o início
+            // Scroll para cima (delta negativo), volta para a imagem anterior
+            setCurrentImageIndex(currentImageIndex - 1);
         }
     };
 

@@ -5,3 +5,4 @@ from io import BytesIO
 import zipfile
 
 db = Database()
+db.update_ready(14)
