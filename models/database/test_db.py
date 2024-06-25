@@ -5,4 +5,4 @@ from io import BytesIO
 import zipfile
 
 db = Database()
-db.update_ready(14)
+db.delete_project(24)

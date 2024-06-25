@@ -121,8 +121,6 @@ async def upload_file(background_tasks: BackgroundTasks, file: UploadFile = File
         file_content = await file.read()
         start_prompt = await g.get_image_description(BytesIO(file_content))
 
-        print("Start Prompt : ", start_prompt)
-
         prompt_gpt = await g.gpt_prompt_create(start_prompt)
         prompt_text = prompt_gpt[0][1]
 
@@ -147,9 +145,10 @@ async def create_infinite_zoom(prompt: str, background_tasks: BackgroundTasks):
     try:
         prompt_gpt = await g.gpt_prompt_create(prompt)
         prompt_text = prompt_gpt[0][1]
-        print("prompt text", prompt_text)
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         project_id = database.insert_project(prompt, now, prompt_text)
+        
+        print("Prompt :", prompt_text)
         
         background_tasks.add_task(g.sd_generate_image, prompt_gpt, project_id)
 

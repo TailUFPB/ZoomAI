@@ -24,10 +24,13 @@ class Generator:
         self.status_path = os.path.join(os.path.dirname(__file__), 'status')
         #os.environ["OPENAI_API_KEY"] 
         
-        self.negative_prompt = "frames, borderline, text, charachter, duplicate, error, out of frame, watermark, low quality, ugly, deformed, blur"
+        self.negative_prompt = "frames, collage, sticker, cut-out, layered images, art gallery, wall, border, borders, room, \
+        borderline, text, logo, writing, title, emblem, headline,charachter, duplicate, error, out of frame, watermark, \
+        low quality, ugly, deformed, blur, texts, signature, watermark, letters, \
+        titles, words, handwritten, typing"
         self.default_prompt = [[0, '']]
         self.num_outpainting_steps = 40
-        self.guidance_scale = 7
+        self.guidance_scale = 15
         self.num_inference_steps = 50
         self.custom_init_image = None
         self.project_id = None
@@ -39,7 +42,10 @@ class Generator:
         self.end_thread = False
         
         self.skip_frames = 10
-    
+
+        print("num_inference_steps : {} - guidance_scale : {} - num_outpainting_steps : {}"\
+        .format(self.num_inference_steps, self.guidance_scale, self.num_outpainting_steps))
+
     def read_image_from_db(self, project_id):
         images = self.db.get_images(project_id)
         count = 0
@@ -68,8 +74,17 @@ class Generator:
 
                     self.mutex.release()
 
-                    thread_db.insert_image(self.project_id, imgByteArr, int((self.image_order)//self.skip_frames))
-                    print(f"frame {int((self.image_order)//self.skip_frames)} saved")
+                    while True:
+                        try:
+                            thread_db.insert_image(self.project_id, imgByteArr, int((self.image_order) // self.skip_frames))
+                            print(f"frame {int((self.image_order) // self.skip_frames)} saved")
+                            break
+                        except sqlite3.OperationalError as e:
+                            if "database is locked" in str(e):
+                                print("Database is locked. Retrying in 0.1 seconds...")
+                                time.sleep(0.1)
+                            else:
+                                raise
                 else:
                     self.mutex.release()
                     self.all_frames.pop(0)
@@ -105,7 +120,6 @@ class Generator:
 
     async def gpt_prompt_create(self, userInput):
         json_schema_path = os.path.join(os.path.dirname(__file__), 'jsonSchema.txt')
-        print(json_schema_path)
         client = OpenAI(api_key= self.openai_key)
 
         with open(json_schema_path, 'r') as f:
@@ -124,7 +138,6 @@ class Generator:
             ]
         )
         
-        print(response, "response")
         mensagem = response.choices[0].message.content
 
         try:
@@ -199,8 +212,9 @@ class Generator:
         else:
             start_time = datetime.now()
             initial_conditioning = compel(prompts[min(k for k in prompts.keys() if k >= 0)])
+            initial_negative_conditioning = compel.build_conditioning_tensor(self.negative_prompt)
             init_images = pipe(prompt_embeds=initial_conditioning,
-                            negative_prompt=self.negative_prompt,
+                            negative_prompt_embeds=initial_negative_conditioning,
                             image=current_image,
                             guidance_scale=self.guidance_scale,
                             height=height,

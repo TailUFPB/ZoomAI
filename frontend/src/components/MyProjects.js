@@ -76,7 +76,7 @@ const AllProjects = () => {
 
       <div className='flex items-center justify-center flex-col' style={{marginTop: "40px", marginBottom:"100px"}}>
         <h1 className='text-4xl text-white font-bold'>See your ZoomAI projects</h1>
-        <p className='tmt-4 text-lg font-normal text-gray-400 sm:mt-8'>Clarity gives you the blocks & components you need to create a truly professional website, landing page or admin panel for your SaaS.</p>
+        <p className='tmt-4 text-lg font-normal text-gray-400 sm:mt-8'>Explore your innovative ZoomAI projects here</p>
       </div>
 
       <div className='flex items-center justify-center' style={{ position: "relative",bottom: "50px", userSelect: "none"}}>
