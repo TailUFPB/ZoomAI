@@ -13,6 +13,7 @@ import os
 import io
 import ast
 
+
 class Generator:
     def __init__(self):
         self.actual_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
