@@ -12,6 +12,7 @@ import torch
 import os
 import io
 import ast
+import sqlite3
 
 
 class Generator:
@@ -25,13 +26,13 @@ class Generator:
         self.status_path = os.path.join(os.path.dirname(__file__), 'status')
         #os.environ["OPENAI_API_KEY"] 
         
-        self.negative_prompt = "frames, collage, sticker, cut-out, layered images, art gallery, wall, border, borders, room, \
-        borderline, text, logo, writing, title, emblem, headline,charachter, duplicate, error, out of frame, watermark, \
-        low quality, ugly, deformed, blur, texts, signature, watermark, letters, \
-        titles, words, handwritten, typing"
+        self.negative_prompt = "frames, collage, sticker, inconsistencies, cut-out, layered images, lines, polygons, art gallery, wall, border, borders, room, \
+        borderline, text, logo, writing, title, emblem, headline,charachter, duplicate, error, overlays, annotations, out of frame, watermark, \
+        low quality, ugly, deformed, blur, texts, signature, watermark, letters, discontinuous \
+        titles, words, handwritten, typing, imperfections, traces, distortions"
         self.default_prompt = [[0, '']]
         self.num_outpainting_steps = 40
-        self.guidance_scale = 15
+        self.guidance_scale = 8
         self.num_inference_steps = 50
         self.custom_init_image = None
         self.project_id = None
