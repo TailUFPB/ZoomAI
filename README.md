@@ -49,13 +49,13 @@ pyton3 backend/api.py
 ```
 
 #### Frontend
-2. Navigate to the frontend directory and install frontend dependencies:
+1. Navigate to the frontend directory and install frontend dependencies:
 ```sh
 cd frontend
 npm start
 ```
 
-3. Start the frontend:
+2. Start the frontend:
 ```sh
 npm start
 ```
